@@ -2,6 +2,7 @@ using Template.API.Extensions;
 using Template.Application.Extensions;
 using Template.Domain.Entities;
 using Template.Infrastructure.Extensions;
+using Template.Infrastructure.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,25 +18,30 @@ builder.AddPresentation();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy("AllowAll",
-		b => b.AllowAnyHeader()
-			.AllowAnyOrigin()
-			.AllowAnyMethod());
+    options.AddPolicy("AllowAll",
+        b => b.AllowAnyHeader()
+            .AllowAnyOrigin()
+            .AllowAnyMethod());
 });
 
 var app = builder.Build();
 
 var scope = app.Services.CreateScope(); //for seeders
 // example: var govSeeder = scope.ServiceProvider.GetRequiredService<IGovernorateSeeder>();
+var rolesSeeder = scope.ServiceProvider.GetRequiredService<IRolesSeeder>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+
+await rolesSeeder.Seed();
 
 app.UseHttpsRedirection();
 app.MapGroup("api/identity").WithTags("Identity").MapIdentityApi<User>();
