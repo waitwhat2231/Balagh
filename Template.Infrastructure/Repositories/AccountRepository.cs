@@ -1,20 +1,6 @@
-﻿using MailKit.Net.Smtp;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using MimeKit;
-using MimeKit.Text;
-using Template.Domain.Entities;
-using Template.Domain.Entities.AuthEntities;
-using Template.Domain.Entities.Notifications;
-using Template.Domain.Exceptions;
-using Template.Domain.Repositories;
-using Template.Infrastructure.Persistence;
+﻿namespace Template.Infrastructure.Repositories;
 
-namespace Template.Infrastructure.Repositories;
-
-public class AccountRepository(UserManager<User> userManager,
+/*public class AccountRepository(UserManager<User> userManager,
         TemplateDbContext dbcontext,
         ITokenRepository tokenRepository,
         IHostEnvironment hostEnvironment,
@@ -370,7 +356,7 @@ public class AccountRepository(UserManager<User> userManager,
         return result;
     }
 
-    /* public async Task<IEnumerable<IdentityError>> ResetPassword(string token, string newPassword)
+    *//* public async Task<IEnumerable<IdentityError>> ResetPassword(string token, string newPassword)
      {
          var existingUser = await dbcontext.Users.FirstOrDefaultAsync(u => u.ForgotPasswordToken.Equals(token));
 
@@ -394,7 +380,7 @@ public class AccountRepository(UserManager<User> userManager,
          };
          return errorList;
 
-     }*/
+     }*//*
 
     public async Task<(bool IsValid, string Token)> VerifyForgotPasswordOtp(string code)
     {
@@ -477,7 +463,7 @@ public class AccountRepository(UserManager<User> userManager,
     {
         throw new NotImplementedException();
     }
-}
+}*/
 
 //public async Task<bool> Verify(string verficationToken)
 //{

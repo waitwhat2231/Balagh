@@ -1,7 +1,6 @@
 using Template.API.Extensions;
 using Template.Application.Extensions;
 using Template.Domain.Entities;
-using Template.Infrastructure.Extensions;
 using Template.Infrastructure.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
