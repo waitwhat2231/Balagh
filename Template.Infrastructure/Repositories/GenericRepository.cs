@@ -1,4 +1,5 @@
-﻿using Template.Domain.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using Template.Domain.Repositories;
 using Template.Infrastructure.Persistence;
 
 namespace Template.Infrastructure.Repositories;
@@ -62,4 +63,5 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         await dbContext.SaveChangesAsync();
     }
+
 }

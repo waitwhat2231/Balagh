@@ -242,6 +242,9 @@ namespace Template.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("LastLoggedInAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -396,9 +399,12 @@ namespace Template.Infrastructure.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("OTPs");
                 });
@@ -415,6 +421,9 @@ namespace Template.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -422,7 +431,11 @@ namespace Template.Infrastructure.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("GovernmentalEntityId")
+                    b.Property<string>("ForgotPasswordToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("GovernmentalEntityId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -617,13 +630,21 @@ namespace Template.Infrastructure.Migrations
                     b.Navigation("Device");
                 });
 
+            modelBuilder.Entity("Template.Domain.Entities.OTP", b =>
+                {
+                    b.HasOne("Template.Domain.Entities.User", null)
+                        .WithOne("Otp")
+                        .HasForeignKey("Template.Domain.Entities.OTP", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Template.Domain.Entities.User", b =>
                 {
                     b.HasOne("Template.Domain.Entities.GovernmentalEntity", "GovernmentalEntity")
                         .WithMany("Employees")
                         .HasForeignKey("GovernmentalEntityId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("GovernmentalEntity");
                 });
@@ -658,6 +679,9 @@ namespace Template.Infrastructure.Migrations
                     b.Navigation("Histories");
 
                     b.Navigation("Notes");
+
+                    b.Navigation("Otp")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

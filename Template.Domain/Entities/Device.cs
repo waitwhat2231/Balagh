@@ -8,4 +8,5 @@ public class Device
     public User User { get; set; } = default!;
     public string FcmToken { get; set; } = string.Empty;
     public List<Notification> Notifications { get; set; } = [];
+    public DateTime LastLoggedInAt { get; set; }
 }

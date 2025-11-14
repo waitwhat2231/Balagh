@@ -2,8 +2,9 @@
 
 namespace Template.Application.Users
 {
-	public interface IUserContext
-	{
-		CurrentUser? GetCurrentUser();
-	}
+    public interface IUserContext
+    {
+        CurrentUser? GetCurrentUser();
+        string? GetAccessToken();
+    }
 }
