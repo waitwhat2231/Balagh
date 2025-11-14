@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Template.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Template.Infrastructure.Persistence;
 namespace Template.Infrastructure.Migrations
 {
     [DbContext(typeof(TemplateDbContext))]
-    partial class TemplateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251114133640_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,7 +159,6 @@ namespace Template.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Template.Domain.Entities.Complaint", b =>
-            modelBuilder.Entity("Template.Domain.Entities.Notifications.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -166,16 +168,12 @@ namespace Template.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                    b.Property<string>("DeviceToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("GovernmentalEntityId")
                         .HasColumnType("int");
-                    b.Property<DateTime?>("LastLoggedInAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
-                    b.Property<bool?>("OptIn")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsLocked")
@@ -420,9 +418,6 @@ namespace Template.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -465,9 +460,6 @@ namespace Template.Infrastructure.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -478,9 +470,6 @@ namespace Template.Infrastructure.Migrations
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
-                        .IsUnique()
-                        .HasDatabaseName("EmailIndex")
-                        .HasFilter("[NormalizedEmail] IS NOT NULL");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
@@ -572,7 +561,6 @@ namespace Template.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Template.Domain.Entities.Device", b =>
-            modelBuilder.Entity("Template.Domain.Entities.Notifications.Device", b =>
                 {
                     b.HasOne("Template.Domain.Entities.User", "User")
                         .WithMany("Devices")
@@ -598,7 +586,6 @@ namespace Template.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Complaint");
-                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
