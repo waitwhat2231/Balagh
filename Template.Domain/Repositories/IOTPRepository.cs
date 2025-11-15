@@ -4,6 +4,6 @@ namespace Template.Domain.Repositories
 {
     public interface IOTPRepository : IGenericRepository<OTP>
     {
-        public Task<OTP> GetOtpFromCode(string code);
+        public Task<OTP> GetOtpFromCode(string code, string userId);
     }
 }

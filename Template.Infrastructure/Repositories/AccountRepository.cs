@@ -131,7 +131,7 @@ public class AccountRepository(UserManager<User> userManager,
                 Code = code,
                 UserId = user.Id,
                 Consumed = false,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(10)
+                ExpiresAt = DateTime.UtcNow.AddHours(2)
             });
             await dbContext.SaveChangesAsync();
         }
@@ -140,11 +140,11 @@ public class AccountRepository(UserManager<User> userManager,
     public async Task<bool> ConfirmEmailAsync(string email, string code)
     {
         var user = await userManager.FindByEmailAsync(email);
-        if (email is null)
+        if (user is null)
         {
             return false;
         }
-        var otp = await otpRepository.GetOtpFromCode(code);
+        var otp = await otpRepository.GetOtpFromCode(code, user.Id);
         if (otp == null || otp.Consumed == true || DateTime.UtcNow > otp.ExpiresAt)
         {
             return false;
