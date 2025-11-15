@@ -12,4 +12,3 @@ public enum ChangeType
 {
     StatusChange
 }
-public enum
