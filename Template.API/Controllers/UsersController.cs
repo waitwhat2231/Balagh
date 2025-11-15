@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Template.Application.Tokens.Commands;
 using Template.Application.Users;
 using Template.Application.Users.Commands;
+using Template.Application.Users.Commands.ConfirmEmail;
 using Template.Application.Users.Dtos;
 using Template.Application.Users.Queries.CurrentUser;
 
@@ -28,6 +29,17 @@ namespace Template.API.Controllers
             }
             return Ok();
         }
+        [HttpPost("confirmEmail")]
+        public async Task<ActionResult> CofirmUserEmail([FromBody] ConfirmEmailCommand command)
+        {
+            var result = await mediator.Send(command);
+            if (!result.SuccessStatus)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok();
+        }
+
         [HttpPost("login")]
         public async Task<ActionResult> LoginUser(LoginUserCommand request)
         {

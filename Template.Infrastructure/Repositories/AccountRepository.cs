@@ -7,6 +7,7 @@ using MimeKit;
 using MimeKit.Text;
 using Template.Domain.AuthEntities;
 using Template.Domain.Entities;
+using Template.Domain.Enums;
 using Template.Domain.Repositories;
 using Template.Infrastructure.Persistence;
 
@@ -16,7 +17,8 @@ public class AccountRepository(UserManager<User> userManager,
         TemplateDbContext dbContext,
         ITokenRepository tokenRepository,
         IHostEnvironment hostEnvironment,
-        IDeviceRepository deviceRepository
+        IDeviceRepository deviceRepository,
+        IOTPRepository otpRepository
         ) : IAccountRepository
 {
     public async Task<User> GetUserAsync(string id, bool isAssistant)
@@ -68,6 +70,24 @@ public class AccountRepository(UserManager<User> userManager,
         if (res.Succeeded)
         {
             await userManager.AddToRoleAsync(owner, role);
+            if (role.ToUpper() == nameof(EnumRoleNames.User).ToUpper())
+            {
+                var code = new Random().Next(100000, 999999).ToString();
+                await SendEmail(owner.Email, code);
+                await otpRepository.AddAsync(new OTP()
+                {
+                    Code = code,
+                    UserId = owner.Id,
+                    Consumed = false,
+                    ExpiresAt = DateTime.UtcNow.AddMinutes(10)
+                });
+            }
+            else
+            {
+                owner.EmailConfirmed = true;
+                await userManager.UpdateAsync(owner);
+            }
+
         }
 
         return res.Errors;
@@ -104,9 +124,35 @@ public class AccountRepository(UserManager<User> userManager,
         if (check.Succeeded)
         {
             await userManager.AddToRoleAsync(user, "User");
+            var code = new Random().Next(100000, 999999).ToString();
+            await SendEmail(user.Email, code);
+            await otpRepository.AddAsync(new OTP()
+            {
+                Code = code,
+                UserId = user.Id,
+                Consumed = false,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(10)
+            });
             await dbContext.SaveChangesAsync();
         }
         return check.Errors;
+    }
+    public async Task<bool> ConfirmEmailAsync(string email, string code)
+    {
+        var user = await userManager.FindByEmailAsync(email);
+        if (email is null)
+        {
+            return false;
+        }
+        var otp = await otpRepository.GetOtpFromCode(code);
+        if (otp == null || otp.Consumed == true || DateTime.UtcNow > otp.ExpiresAt)
+        {
+            return false;
+        }
+        user.EmailConfirmed = true;
+        otp.Consumed = true;
+        await dbContext.SaveChangesAsync();
+        return true;
     }
     public async Task<int> NumberOfUsersInRole(string roleId)
     {
@@ -161,16 +207,16 @@ public class AccountRepository(UserManager<User> userManager,
     public async Task SendEmail(string userEmail, string code)
     {
         var emailMessage = new MimeMessage();
-        emailMessage.From.Add(MailboxAddress.Parse("jane.kunze@ethereal.email"));
+        emailMessage.From.Add(MailboxAddress.Parse("darlene.mcdermott@ethereal.email"));
         emailMessage.To.Add(MailboxAddress.Parse(userEmail));
-        emailMessage.Subject = "Forgot password OTP";
+        emailMessage.Subject = "Email Confirmation OTP";
         emailMessage.Body = new TextPart(TextFormat.Html)
         {
-            Text = $"Your forgot-password code is: {code}"
+            Text = $"Your Email Confirmation code is: {code}"
         };
         using var smtp = new SmtpClient();
         await smtp.ConnectAsync("smtp.ethereal.email", 587, MailKit.Security.SecureSocketOptions.StartTls);
-        smtp.Authenticate("jane.kunze@ethereal.email", "c2ArTkEFyuqHWeCf39");
+        smtp.Authenticate("darlene.mcdermott@ethereal.email", "9q8QFbScP9VKDBg6cx");
         smtp.Send(emailMessage);
         await smtp.DisconnectAsync(true);
         return;
@@ -234,9 +280,9 @@ public class AccountRepository(UserManager<User> userManager,
         {
             return null;
         }
-
         bool isValidCredentials = await userManager.CheckPasswordAsync(user, password);
-        if (isValidCredentials)
+        bool isConfirmedEmail = await userManager.IsEmailConfirmedAsync(user);
+        if (isValidCredentials && isConfirmedEmail)
         {
             var existingDevice = await deviceRepository.GetDeviceByToken(deviceToken, user.Id);
             if (existingDevice != null)
@@ -271,7 +317,8 @@ public class AccountRepository(UserManager<User> userManager,
         }
 
         bool isValidCredentials = await userManager.CheckPasswordAsync(user, password);
-        if (!isValidCredentials)
+        bool isConfirmedEmail = await userManager.IsEmailConfirmedAsync(user);
+        if (!(isValidCredentials && isConfirmedEmail))
         {
             return null;
         }

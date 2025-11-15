@@ -34,4 +34,5 @@ public interface IAccountRepository
     Task<AuthResponse>? LoginUserWithoutDevice(string email, string password);
     Task<List<User>> GetAdmins();
     Task<IdentityResult> AssistantRecoveryPassword(string userId, string newPassword);
+    Task<bool> ConfirmEmailAsync(string email, string code);
 }

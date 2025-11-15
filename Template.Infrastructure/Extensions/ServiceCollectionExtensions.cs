@@ -58,6 +58,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFileService, FileService>();
 
         services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddScoped<IOTPRepository, OTPRepository>();
         services.AddScoped<IRolesSeeder, RolesSeeder>();
     }
 }

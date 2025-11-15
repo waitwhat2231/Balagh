@@ -1,7 +1,6 @@
 using Microsoft.Extensions.FileProviders;
 using Template.API.Extensions;
 using Template.Application.Extensions;
-using Template.Domain.Entities;
 using Template.Infrastructure.Extensions;
 using Template.Infrastructure.Seeders;
 
@@ -53,7 +52,7 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/Uploads"
 });
 
-app.MapGroup("api/identity").WithTags("Identity").MapIdentityApi<User>();
+//app.MapGroup("api/identity").WithTags("Identity").MapIdentityApi<User>();
 
 app.UseCors("AllowAll");
 
