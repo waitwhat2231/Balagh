@@ -21,6 +21,7 @@ public class CreateComplaintCommandHandler(ILogger<CreateComplaintCommandHandler
         string currentUserId = userContext.GetCurrentUser()!.Id;
         var complaint = mapper.Map<Complaint>(request);
         complaint.UserId = currentUserId;
+        complaint.Status = Domain.ComplaintStatus.New;
 
         if (request.ComplaintFiles.Count > 0)
         {

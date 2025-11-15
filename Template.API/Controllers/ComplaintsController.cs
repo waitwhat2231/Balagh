@@ -18,7 +18,11 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<ComplaintDto>> CreatePrize([FromForm] CreateComplaintCommand command)
     {
         var result = await mediator.Send(command);
-        return Ok(result);
+        if (!result.SuccessStatus)
+        {
+            return BadRequest(result.Errors);
+        }
+        return Ok(result.Data);
     }
 
     [HttpGet]
