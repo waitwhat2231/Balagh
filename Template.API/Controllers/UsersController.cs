@@ -27,7 +27,7 @@ namespace Template.API.Controllers
             {
                 return BadRequest(result.Errors);
             }
-            return Ok();
+            return Ok(result);
         }
         [HttpPost("confirmEmail")]
         public async Task<ActionResult> CofirmUserEmail([FromBody] ConfirmEmailCommand command)
@@ -37,7 +37,7 @@ namespace Template.API.Controllers
             {
                 return BadRequest(result.Errors);
             }
-            return Ok();
+            return Ok(result);
         }
 
         [HttpPost("login")]

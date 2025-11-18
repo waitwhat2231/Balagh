@@ -79,4 +79,9 @@ public class CachedComplaintRepository : IComplaintRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<List<(Complaint complaint, string userName)>> GetAllComplaintsWithUserName()
+    {
+        return _decorated.GetAllComplaintsWithUserName();
+    }
 }

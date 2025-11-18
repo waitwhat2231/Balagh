@@ -13,7 +13,7 @@ public class GetAllComplaintsQueryHandler(ILogger<GetAllComplaintsQueryHandler> 
     public async Task<Result<IEnumerable<ComplaintDto>>> Handle(GetAllComplaintsQuery request, CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting all complaints");
-        var complaints = await complaintRepository.GetAllAsync();
+        var complaints = await complaintRepository.GetAllComplaintsWithUserName();
         var result = mapper.Map<IEnumerable<ComplaintDto>>(complaints);
         return Result<IEnumerable<ComplaintDto>>.Success(result);
     }

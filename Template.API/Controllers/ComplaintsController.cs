@@ -30,7 +30,7 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<IEnumerable<ComplaintDto>>> GetAllComplaints()
     {
         var result = await mediator.Send(new GetAllComplaintsQuery());
-        return Ok(result);
+        return Ok(result.Data);
     }
 
     [HttpGet]
@@ -38,6 +38,6 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<ComplaintDto>> GetComplaintById([FromRoute] int complaintId)
     {
         var result = await mediator.Send(new GetComplaintByIdQuery(complaintId));
-        return Ok(result);
+        return Ok(result.Data);
     }
 }

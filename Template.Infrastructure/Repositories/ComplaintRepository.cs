@@ -18,4 +18,8 @@ public class ComplaintRepository : GenericRepository<Complaint>, IComplaintRepos
             .Include(c => c.ComplaintFiles)
             .FirstOrDefaultAsync(c => c.Id == complaintId);
     }
+    public async Task<List<(Complaint complaint, string userName)>> GetAllComplaintsWithUserName()
+    {
+        return await dbContext.Complaints.Select(c => new ValueTuple<Complaint, string>(c, c.User.UserName)).ToListAsync();
+    }
 }

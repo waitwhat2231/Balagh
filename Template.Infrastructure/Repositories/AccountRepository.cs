@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using MimeKit;
 using MimeKit.Text;
@@ -18,7 +19,8 @@ public class AccountRepository(UserManager<User> userManager,
         ITokenRepository tokenRepository,
         IHostEnvironment hostEnvironment,
         IDeviceRepository deviceRepository,
-        IOTPRepository otpRepository
+        IOTPRepository otpRepository,
+        IConfiguration configuration
         ) : IAccountRepository
 {
     public async Task<User> GetUserAsync(string id, bool isAssistant)
@@ -207,7 +209,8 @@ public class AccountRepository(UserManager<User> userManager,
     public async Task SendEmail(string userEmail, string code)
     {
         var emailMessage = new MimeMessage();
-        emailMessage.From.Add(MailboxAddress.Parse("darlene.mcdermott@ethereal.email"));
+        //for etherreal put "darlene.mcdermott@ethereal.email";
+        emailMessage.From.Add(MailboxAddress.Parse("Balaghmail.com"));
         emailMessage.To.Add(MailboxAddress.Parse(userEmail));
         emailMessage.Subject = "Email Confirmation OTP";
         emailMessage.Body = new TextPart(TextFormat.Html)
@@ -215,8 +218,10 @@ public class AccountRepository(UserManager<User> userManager,
             Text = $"Your Email Confirmation code is: {code}"
         };
         using var smtp = new SmtpClient();
-        await smtp.ConnectAsync("smtp.ethereal.email", 587, MailKit.Security.SecureSocketOptions.StartTls);
-        smtp.Authenticate("darlene.mcdermott@ethereal.email", "9q8QFbScP9VKDBg6cx");
+        await smtp.ConnectAsync(configuration["EmailSendingSettings:Host"], 587, MailKit.Security.SecureSocketOptions.StartTls);
+
+        //  smtp.Authenticate("darlene.mcdermott@ethereal.email", "9q8QFbScP9VKDBg6cx");
+        smtp.Authenticate(configuration["EmailSendingSettings:UserName"], configuration["EmailSendingSettings:Password"]);
         smtp.Send(emailMessage);
         await smtp.DisconnectAsync(true);
         return;
