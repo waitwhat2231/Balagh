@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Template.Domain.Entities;
+using Template.Domain.Enums;
+using Template.Domain.Pagination;
 using Template.Domain.Repositories;
 
 namespace Template.Infrastructure.Repositories;
@@ -80,8 +82,8 @@ public class CachedComplaintRepository : IComplaintRepository
         throw new NotImplementedException();
     }
 
-    public Task<List<(Complaint complaint, string userName)>> GetAllComplaintsWithUserName()
+    public Task<PagedEntity<(Complaint complaint, string userName)>> GetAllComplaintsWithUserName(int pageNum, int pageSize, EnumRoleNames userRole, string UserId)
     {
-        return _decorated.GetAllComplaintsWithUserName();
+        return _decorated.GetAllComplaintsWithUserName(pageNum, pageSize, userRole, UserId); ;
     }
 }

@@ -26,14 +26,16 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [Route("GetAllComplaints")]
-    public async Task<ActionResult<IEnumerable<ComplaintDto>>> GetAllComplaints()
+    public async Task<ActionResult<IEnumerable<ComplaintDto>>> GetAllComplaints(int pageNum, int pageSize)
     {
         var result = await mediator.Send(new GetAllComplaintsQuery());
         return Ok(result.Data);
     }
 
     [HttpGet]
+    [Authorize]
     [Route("GetComplaintById/{complaintId:int}")]
     public async Task<ActionResult<ComplaintDto>> GetComplaintById([FromRoute] int complaintId)
     {
