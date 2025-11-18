@@ -21,13 +21,15 @@ public class GetAllComplaintsQueryHandler(ILogger<GetAllComplaintsQueryHandler> 
         var userId = user.Id;
         var userRole = (EnumRoleNames)Enum.Parse(typeof(EnumRoleNames), user.Roles.First());
         var complaints = await complaintRepository.GetAllComplaintsWithUserName(request.PageNum, request.PageSize, userRole, userId);
+        var complaintList = complaints.Items;
+        var resultComplainstList = mapper.Map<List<ComplaintDto>>(complaintList);
         var result = new PagedEntity<ComplaintDto>()
         {
-            Items = mapper.Map<List<ComplaintDto>>(complaints.Items),
+            Items = resultComplainstList,
             PageNumber = request.PageNum,
             PageSize = request.PageSize,
             TotalItems = complaints.TotalItems,
         };
-        return Result<PagedEntity<ComplaintDto>>.Success(result);
+        return Result.Success(result);
     }
 }

@@ -18,7 +18,6 @@ public class RegisterUserCommandHandler(IMapper mapper,
     {
         var user = mapper.Map<User>(request);
         user.UserName = request.UserName;
-
         var errors = await accountRepository.Register(user, request.Password, request.Role);
         return Result.Success(errors);
     }

@@ -8,4 +8,13 @@ public class GetAllComplaintsQuery : IQuery<PagedEntity<ComplaintDto>>
 {
     public int PageNum { get; set; } = 1;
     public int PageSize { get; set; }
+    public GetAllComplaintsQuery(int pageNum, int pageSize)
+    {
+        this.PageNum = pageNum;
+        this.PageSize = pageSize;
+    }
+    public GetAllComplaintsQuery()
+    {
+
+    }
 }

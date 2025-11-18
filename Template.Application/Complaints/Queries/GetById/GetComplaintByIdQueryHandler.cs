@@ -8,6 +8,7 @@ using Template.Domain.Repositories;
 namespace Template.Application.Complaints.Queries.GetById;
 
 public class GetComplaintByIdQueryHandler(ILogger<GetComplaintByIdQueryHandler> logger, IComplaintRepository complaintRepository,
+    IAccountRepository accountRepository,
     IMapper mapper) : IQueryHandler<GetComplaintByIdQuery, ComplaintDto>
 {
     public async Task<Result<ComplaintDto>> Handle(GetComplaintByIdQuery request, CancellationToken cancellationToken)
@@ -21,6 +22,8 @@ public class GetComplaintByIdQueryHandler(ILogger<GetComplaintByIdQueryHandler> 
         }
 
         var result = mapper.Map<ComplaintDto>(complaint);
+        var user = await accountRepository.GetUserAsync(complaint.UserId);
+        result.UserName = user.UserName;
         return Result<ComplaintDto>.Success(result);
     }
 }

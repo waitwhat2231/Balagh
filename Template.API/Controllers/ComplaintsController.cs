@@ -30,7 +30,7 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     [Route("GetAllComplaints")]
     public async Task<ActionResult<IEnumerable<ComplaintDto>>> GetAllComplaints(int pageNum, int pageSize)
     {
-        var result = await mediator.Send(new GetAllComplaintsQuery());
+        var result = await mediator.Send(new GetAllComplaintsQuery(pageNum, pageSize));
         return Ok(result.Data);
     }
 

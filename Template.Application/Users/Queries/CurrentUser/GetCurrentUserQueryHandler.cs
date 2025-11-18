@@ -12,7 +12,7 @@ class GetCurrentUserQueryHandler(ILogger<GetCurrentUserQueryHandler> logger, IMa
     public async Task<Result<UserDto>> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
     {
         var current_User = userContext.GetCurrentUser();
-        var fullUser = await accountRepository.GetUserAsync(current_User.Id, current_User.Roles.Contains("AssistantDoctor"));
+        var fullUser = await accountRepository.GetUserAsync(current_User.Id);
         if (fullUser == null)
         {
             return Result.Failure<UserDto>(["User not found"]);

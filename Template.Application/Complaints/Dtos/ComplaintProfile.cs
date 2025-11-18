@@ -15,7 +15,16 @@ public class ComplaintProfile : Profile
         CreateMap<Complaint, ComplaintDto>()
             .ReverseMap();
         CreateMap<(Complaint complaint, string userName), ComplaintDto>()
-            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.userName)).ReverseMap();
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.userName))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.complaint.Location))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.complaint.Description))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.complaint.Status))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.complaint.UserId))
+            .ForMember(dest => dest.GovernmentalEntityId, opt => opt.MapFrom(src => src.complaint.GovernmentalEntityId))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.complaint.CreatedAt))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.complaint.Id))
+            .ReverseMap();
+
 
         CreateMap<ComplaintFile, ComplaintFileDto>()
             .ForMember(dest => dest.Path, opt => opt.MapFrom<ComplaintFilesResolver>())

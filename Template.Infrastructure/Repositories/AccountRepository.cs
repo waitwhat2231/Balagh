@@ -23,7 +23,7 @@ public class AccountRepository(UserManager<User> userManager,
         IConfiguration configuration
         ) : IAccountRepository
 {
-    public async Task<User> GetUserAsync(string id, bool isAssistant)
+    public async Task<User> GetUserAsync(string id)
     {
 
         return await dbContext.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
@@ -177,7 +177,7 @@ public class AccountRepository(UserManager<User> userManager,
     }
     public async Task<bool> CheckPassword(string userId, string password)
     {
-        var user = await GetUserAsync(userId, false);
+        var user = await GetUserAsync(userId);
         if (user == null || password == null)
         {
             return false;
