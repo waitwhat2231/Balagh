@@ -35,9 +35,17 @@ public class CreateComplaintCommandHandler(ILogger<CreateComplaintCommandHandler
                 });
             }
         }
+        try
+        {
+            var created = await complaintRepository.AddAsync(complaint);
+            var result = mapper.Map<ComplaintDto>(created);
+            return Result<ComplaintDto>.Success(result);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.Message);
+            return Result<ComplaintDto>.Failure([ex.Message]);
+        }
 
-        var created = await complaintRepository.AddAsync(complaint);
-        var result = mapper.Map<ComplaintDto>(created);
-        return Result<ComplaintDto>.Success(result);
     }
 }

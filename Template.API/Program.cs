@@ -3,6 +3,7 @@ using Template.API.Extensions;
 using Template.Application.Extensions;
 using Template.Infrastructure.Extensions;
 using Template.Infrastructure.Seeders;
+using TripPlanner.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,10 +33,10 @@ var app = builder.Build();
 var scope = app.Services.CreateScope(); //for seeders
 // example: var govSeeder = scope.ServiceProvider.GetRequiredService<IGovernorateSeeder>();
 var rolesSeeder = scope.ServiceProvider.GetRequiredService<IRolesSeeder>();
-
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 //}
