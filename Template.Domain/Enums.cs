@@ -10,5 +10,7 @@ public enum ComplaintStatus
 
 public enum ChangeType
 {
-    StatusChange
+    StatusChange,
+    AddNote,
+    RequestMoreInformation
 }

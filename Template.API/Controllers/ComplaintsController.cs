@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Application.Complaints.Commands.Create;
 using Template.Application.Complaints.Dtos;
+using Template.Application.Complaints.Notes.Commands;
 using Template.Application.Complaints.Queries.GetAll;
 using Template.Application.Complaints.Queries.GetById;
+using Template.Domain.Enums;
 
 namespace Template.API.Controllers;
 
@@ -41,5 +43,18 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new GetComplaintByIdQuery(complaintId));
         return Ok(result.Data);
+    }
+    [HttpPost]
+    [Authorize(Roles = $"{nameof(EnumRoleNames.Employee)},{nameof(EnumRoleNames.Administrator)}")]
+    [Route("{complaintId:int}/notes/add")]
+    public async Task<ActionResult> AddNotesToComplaint([FromRoute] int complaintId, [FromBody] AddNoteCommand addNoteCommand)
+    {
+        addNoteCommand.ComplaintId = complaintId;
+        var result = await mediator.Send(addNoteCommand);
+        if (!result.SuccessStatus)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
     }
 }

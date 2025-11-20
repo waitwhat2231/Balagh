@@ -300,7 +300,7 @@ public class AccountRepository(UserManager<User> userManager,
 
                 var device = new Device()
                 {
-                    //LastLoggedInAt = DateTime.UtcNow,
+                    LastLoggedInAt = DateTime.UtcNow,
                     FcmToken = deviceToken,
                     UserId = user.Id,
                     IsActive = true
