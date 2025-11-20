@@ -12,5 +12,10 @@ public enum ChangeType
 {
     StatusChange,
     AddNote,
-    RequestMoreInformation
+    RequestMoreInformation,
+    UpdateDescription,
+    UpdateLocation,
+    ChangeOnOtherParty,
+    UpdateStatus,
+    AddFile
 }

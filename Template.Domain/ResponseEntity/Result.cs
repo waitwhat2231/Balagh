@@ -1,25 +1,23 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace Template.Domain.Entities.ResponseEntity;
+﻿namespace Template.Domain.Entities.ResponseEntity;
 
 public class Result
 {
     public bool SuccessStatus { get; init; }
     public List<string>? Errors { get; set; }
-    public Result(bool success,List<string>?errors)
+    public Result(bool success, List<string>? errors)
     {
         SuccessStatus = success;
         Errors = (errors == null ? new List<string>() : errors);
     }
     public static Result Success()
     {
-        return new Result(true,new List<string>());
+        return new Result(true, new List<string>());
     }
     public static Result<T> Success<T>()
     {
-        return new Result<T>(default(T),true,new List<string>());
+        return new Result<T>(default(T), true, new List<string>());
     }
-    public static Result<T>Success<T>(T data)
+    public static Result<T> Success<T>(T data)
     {
         return new Result<T>(data, true, new List<string>());
     }
@@ -29,13 +27,13 @@ public class Result
     }
     public static Result<T> Failure<T>(List<string> errors)
     {
-        return new Result<T>(default,false,errors);
+        return new Result<T>(default, false, errors);
     }
 
 }
 public class Result<T> : Result
 {
-    public T? Data { get;}
+    public T? Data { get; }
     internal Result(T? data, bool success, List<string>? errors)
          : base(success, errors)
     {
@@ -47,8 +45,8 @@ public class Result<T> : Result
         return new Result<T>(data, true, new List<string>());
     }
 
-    public static Result<T> Failure(List<string>errors)
+    public static Result<T> Failure(List<string> errors)
     {
-        return new Result<T>(default,false, errors);
+        return new Result<T>(default, false, errors);
     }
 }

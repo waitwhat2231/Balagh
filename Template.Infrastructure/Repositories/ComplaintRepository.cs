@@ -17,6 +17,9 @@ public class ComplaintRepository : GenericRepository<Complaint>, IComplaintRepos
     public async Task<Complaint?> GetComplaintByIdWithFilesAsync(int complaintId)
     {
         return await dbContext.Complaints
+            .Include(c => c.User)
+            .Include(c => c.Histories)
+                .ThenInclude(h => h.User)
             .Include(c => c.ComplaintFiles)
             .FirstOrDefaultAsync(c => c.Id == complaintId);
     }

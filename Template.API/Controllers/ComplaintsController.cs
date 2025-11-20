@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Application.Complaints.Commands.Create;
+using Template.Application.Complaints.Commands.Proceed;
+using Template.Application.Complaints.Commands.Update;
 using Template.Application.Complaints.Dtos;
 using Template.Application.Complaints.Notes.Commands;
 using Template.Application.Complaints.Queries.GetAll;
@@ -18,6 +20,19 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     [HttpPost]
     [Route("CreateComplaint")]
     public async Task<ActionResult<ComplaintDto>> CreatePrize([FromForm] CreateComplaintCommand command)
+    {
+        var result = await mediator.Send(command);
+        if (!result.SuccessStatus)
+        {
+            return BadRequest(result.Errors);
+        }
+        return Ok(result.Data);
+    }
+
+    [Authorize]
+    [HttpPost]
+    [Route("UpdateComplaint/{complaintId:int}")]
+    public async Task<ActionResult<ComplaintDto>> UpdateComplaint([FromRoute] int complaintId, [FromForm] UpdateComplaintCommand command)
     {
         var result = await mediator.Send(command);
         if (!result.SuccessStatus)
@@ -51,6 +66,20 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     {
         addNoteCommand.ComplaintId = complaintId;
         var result = await mediator.Send(addNoteCommand);
+        if (!result.SuccessStatus)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = $"{nameof(EnumRoleNames.Employee)},{nameof(EnumRoleNames.Administrator)}")]
+    [Route("ProceedComplaint/{complaintId:int}")]
+    public async Task<ActionResult<ComplaintDto>> ProceedComplaint([FromRoute] int complaintId, [FromBody] ProceedComplaintCommand command)
+    {
+        command.ComplaintId = complaintId;
+        var result = await mediator.Send(command);
         if (!result.SuccessStatus)
         {
             return BadRequest(result);

@@ -13,9 +13,12 @@ public class ComplaintProfile : Profile
             .ReverseMap();
 
         CreateMap<Complaint, ComplaintDto>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
+            .ForMember(dest => dest.Histories, opt => opt.MapFrom(src => src.Histories))
             .ReverseMap();
+
         CreateMap<(Complaint complaint, string userName), ComplaintDto>()
-            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.userName))
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.complaint.User.UserName))
             .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.complaint.Location))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.complaint.Description))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.complaint.Status))
@@ -24,6 +27,9 @@ public class ComplaintProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.complaint.CreatedAt))
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.complaint.Id))
             .ReverseMap();
+
+        CreateMap<History, HistoryDto>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(h => h.User.UserName));
 
 
         CreateMap<ComplaintFile, ComplaintFileDto>()

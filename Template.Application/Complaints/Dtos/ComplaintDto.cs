@@ -12,5 +12,8 @@ public class ComplaintDto
     public string Location { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public ComplaintStatus Status { get; set; }
+    public string LockedBy { get; set; } = string.Empty;
+    public bool IsLocked { get; set; }
     public List<ComplaintFileDto> ComplaintFiles { get; set; } = [];
+    public List<HistoryDto> Histories { get; set; } = [];
 }
