@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Application.Complaints.Commands.Create;
+using Template.Application.Complaints.Commands.ExtraInformation;
 using Template.Application.Complaints.Commands.Proceed;
 using Template.Application.Complaints.Commands.Update;
 using Template.Application.Complaints.Dtos;
@@ -34,6 +35,7 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     [Route("UpdateComplaint/{complaintId:int}")]
     public async Task<ActionResult<ComplaintDto>> UpdateComplaint([FromRoute] int complaintId, [FromForm] UpdateComplaintCommand command)
     {
+        command.ComplaintId = complaintId;
         var result = await mediator.Send(command);
         if (!result.SuccessStatus)
         {
@@ -54,9 +56,9 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     [HttpGet]
     [Authorize]
     [Route("GetComplaintById/{complaintId:int}")]
-    public async Task<ActionResult<ComplaintDto>> GetComplaintById([FromRoute] int complaintId)
+    public async Task<ActionResult<ComplaintDto>> GetComplaintById([FromRoute] int complaintId, [FromQuery] bool? includeNotes)
     {
-        var result = await mediator.Send(new GetComplaintByIdQuery(complaintId));
+        var result = await mediator.Send(new GetComplaintByIdQuery(complaintId, includeNotes));
         return Ok(result.Data);
     }
     [HttpPost]
@@ -76,7 +78,21 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     [HttpPost]
     [Authorize(Roles = $"{nameof(EnumRoleNames.Employee)},{nameof(EnumRoleNames.Administrator)}")]
     [Route("ProceedComplaint/{complaintId:int}")]
-    public async Task<ActionResult<ComplaintDto>> ProceedComplaint([FromRoute] int complaintId, [FromBody] ProceedComplaintCommand command)
+    public async Task<ActionResult<ComplaintDto>> ProceedComplaint([FromRoute] int complaintId)
+    {
+        var command = new ProceedComplaintCommand();
+        command.ComplaintId = complaintId;
+        var result = await mediator.Send(command);
+        if (!result.SuccessStatus)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+    [HttpPost]
+    [Authorize(Roles = $"{nameof(EnumRoleNames.Employee)},{nameof(EnumRoleNames.Administrator)}")]
+    [Route("RequestExtraInfromation/{complaintId:int}")]
+    public async Task<ActionResult> RequestExtraInfromation([FromRoute] int complaintId, [FromBody] RequestExtraInfromationCommand command)
     {
         command.ComplaintId = complaintId;
         var result = await mediator.Send(command);

@@ -1,4 +1,5 @@
-﻿using Template.Domain;
+﻿using Template.Application.Complaints.Notes.Dtos;
+using Template.Domain;
 
 namespace Template.Application.Complaints.Dtos;
 
@@ -16,4 +17,5 @@ public class ComplaintDto
     public bool IsLocked { get; set; }
     public List<ComplaintFileDto> ComplaintFiles { get; set; } = [];
     public List<HistoryDto> Histories { get; set; } = [];
+    public List<NoteDto> Notes { get; set; } = [];
 }

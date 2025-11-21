@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Template.Application.Notification.Queries.CurrentUserNotifications;
 using Template.Application.Tokens.Commands;
 using Template.Application.Users;
 using Template.Application.Users.Commands;
@@ -74,6 +75,16 @@ namespace Template.API.Controllers
                 return BadRequest(result.Errors);
             }
             return Ok(result.Data);
+        }
+        [HttpGet]
+        [Authorize]
+        [Route("notifications")]
+        public async Task<ActionResult> GetCurrentUserNotifications()
+        {
+            var query = new GetCurrentUserNotificationsQuery();
+            var result = await mediator.Send(query);
+            return Ok(result);
+
         }
         /*  [HttpGet("{Id}")]
           [ProducesResponseType(200, StatusCode = 200, Type = typeof(UserDetailedDto))]

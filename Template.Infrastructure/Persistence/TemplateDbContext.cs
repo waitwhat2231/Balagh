@@ -71,6 +71,12 @@ public class TemplateDbContext(DbContextOptions<TemplateDbContext> options) : Id
             .HasForeignKey(d => d.UserId)
             .OnDelete(DeleteBehavior.NoAction);
 
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Notes)
+            .WithOne(d => d.User)
+            .HasForeignKey(d => d.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         // Device → Notifications
         modelBuilder.Entity<Device>()
             .HasMany(d => d.Notifications)

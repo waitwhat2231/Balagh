@@ -35,13 +35,13 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
         var historyEntries = new List<History>();
 
         /*Processing changing fields (hopefully)*/
-        if (existingComplaint.Description != request.Description)
+        if (existingComplaint.Description != request.Description && !string.IsNullOrEmpty(request.Description))
         {
             AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.UpdateDescription, existingComplaint.Description, request.Description);
             existingComplaint.Description = request.Description;
         }
 
-        if (existingComplaint.Location != request.Location)
+        if (existingComplaint.Location != request.Location && !string.IsNullOrEmpty(request.Location))
         {
             AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.UpdateLocation, existingComplaint.Location, request.Location);
             existingComplaint.Location = request.Location;
@@ -49,7 +49,7 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
 
         if (existingComplaint.GovernmentalEntityId != request.GovernmentalEntityId)
         {
-            AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.ChangeOnOtherParty, existingComplaint.GovernmentalEntityId, request.GovernmentalEntityId);
+            AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.GovermentalEntityChange, existingComplaint.GovernmentalEntityId, request.GovernmentalEntityId);
         }
 
         if (existingComplaint.Status != request.NewStatus)
@@ -59,17 +59,20 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
         }
 
         /*Processing adding files (hopefully)*/
-        foreach (var formFile in request.ComplaintFiles)
+        if (request.ComplaintFiles.Count > 0)
         {
-            var storedFilePath = await fileService.SaveFileAsync(formFile, "Uploads/Complaints", [".jpg", ".png", ".pdf"]);
-
-            existingComplaint.ComplaintFiles.Add(new ComplaintFile
+            foreach (var formFile in request.ComplaintFiles)
             {
-                ComplaintId = existingComplaint.Id,
-                Path = storedFilePath,
-            });
+                var storedFilePath = await fileService.SaveFileAsync(formFile, "Uploads/Complaints", [".jpg", ".png", ".pdf"]);
 
-            AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.AddFile, "", storedFilePath);
+                existingComplaint.ComplaintFiles.Add(new ComplaintFile
+                {
+                    ComplaintId = existingComplaint.Id,
+                    Path = storedFilePath,
+                });
+
+                AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.AddFile, "", storedFilePath);
+            }
         }
 
         /*Unlocking the complaint (hopefully)*/

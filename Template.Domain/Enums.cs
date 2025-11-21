@@ -15,7 +15,13 @@ public enum ChangeType
     RequestMoreInformation,
     UpdateDescription,
     UpdateLocation,
-    ChangeOnOtherParty,
+    GovermentalEntityChange,
     UpdateStatus,
     AddFile
+}
+
+public enum NotificationType
+{
+    ExtraInformationRequest,
+    ComplaintCreated
 }

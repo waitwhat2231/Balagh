@@ -58,7 +58,7 @@ public class NotificationService(TemplateDbContext dbContext, IDeviceRepository 
                     { "title", entity.Title ?? "" },
                     { "body", entity.Body ?? "" },
                     { "createdAt", entity.CreatedAt.ToString() ?? "" },
-                    { "type", entity.Type ?? "general" }
+                    { "type", nameof(entity.Type) }
                 },
                 Android = new AndroidConfig
                 {
@@ -83,6 +83,7 @@ public class NotificationService(TemplateDbContext dbContext, IDeviceRepository 
             }
         }
     }
+
 
     public async Task SendTestNotificationAsync(string fcmToken)
     {
