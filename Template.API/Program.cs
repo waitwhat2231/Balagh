@@ -5,6 +5,12 @@ using Template.Infrastructure.Extensions;
 using Template.Infrastructure.Seeders;
 using TripPlanner.API.Middlewares;
 
+
+var path = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+if (!Directory.Exists(path))
+{
+    Directory.CreateDirectory(path);
+}
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
