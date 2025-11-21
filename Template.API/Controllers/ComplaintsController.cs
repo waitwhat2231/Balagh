@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Application.Complaints.Commands.Create;
+using Template.Application.Complaints.Commands.ExtraInformation;
 using Template.Application.Complaints.Commands.Proceed;
 using Template.Application.Complaints.Commands.Update;
 using Template.Application.Complaints.Dtos;
@@ -80,6 +81,19 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<ComplaintDto>> ProceedComplaint([FromRoute] int complaintId)
     {
         var command = new ProceedComplaintCommand();
+        command.ComplaintId = complaintId;
+        var result = await mediator.Send(command);
+        if (!result.SuccessStatus)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+    [HttpPost]
+    [Authorize(Roles = $"{nameof(EnumRoleNames.Employee)},{nameof(EnumRoleNames.Administrator)}")]
+    [Route("RequestExtraInfromation/{complaintId:int}")]
+    public async Task<ActionResult> RequestExtraInfromation([FromRoute] int complaintId, [FromBody] RequestExtraInfromationCommand command)
+    {
         command.ComplaintId = complaintId;
         var result = await mediator.Send(command);
         if (!result.SuccessStatus)

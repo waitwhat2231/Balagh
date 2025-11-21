@@ -19,3 +19,9 @@ public enum ChangeType
     UpdateStatus,
     AddFile
 }
+
+public enum NotificationType
+{
+    ExtraInformationRequest,
+    ComplaintCreated
+}
