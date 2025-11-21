@@ -13,7 +13,7 @@ public class ProceedComplaintCommandHandler(ILogger<ProceedComplaintCommandHandl
 {
     public async Task<Result<ComplaintDto>> Handle(ProceedComplaintCommand request, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Locking complaint");
+        logger.LogInformation($"Attempting to Lock complaint with Id {request.ComplaintId}");
         var currentUserId = userContext.GetCurrentUser()!.Id;
         var dbUser = await accountRepository.FindUserById(currentUserId);
 

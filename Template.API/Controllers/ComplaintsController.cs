@@ -34,6 +34,7 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     [Route("UpdateComplaint/{complaintId:int}")]
     public async Task<ActionResult<ComplaintDto>> UpdateComplaint([FromRoute] int complaintId, [FromForm] UpdateComplaintCommand command)
     {
+        command.ComplaintId = complaintId;
         var result = await mediator.Send(command);
         if (!result.SuccessStatus)
         {
@@ -54,9 +55,9 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     [HttpGet]
     [Authorize]
     [Route("GetComplaintById/{complaintId:int}")]
-    public async Task<ActionResult<ComplaintDto>> GetComplaintById([FromRoute] int complaintId)
+    public async Task<ActionResult<ComplaintDto>> GetComplaintById([FromRoute] int complaintId, [FromQuery] bool? includeNotes)
     {
-        var result = await mediator.Send(new GetComplaintByIdQuery(complaintId));
+        var result = await mediator.Send(new GetComplaintByIdQuery(complaintId, includeNotes));
         return Ok(result.Data);
     }
     [HttpPost]
