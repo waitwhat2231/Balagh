@@ -11,7 +11,7 @@ public class User : IdentityUser
     public List<Note> Notes { get; set; } = [];
     public List<History> Histories { get; set; } = [];
     public bool IsDeleted { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string ForgotPasswordToken { get; set; } = string.Empty;
     public OTP Otp { get; set; } = default!;
 }

@@ -210,7 +210,7 @@ public class AccountRepository(UserManager<User> userManager,
     {
         var emailMessage = new MimeMessage();
         //for etherreal put "darlene.mcdermott@ethereal.email";
-        emailMessage.From.Add(MailboxAddress.Parse("Balaghmail.com"));
+        emailMessage.From.Add(MailboxAddress.Parse("darlene.mcdermott@ethereal.email"));
         emailMessage.To.Add(MailboxAddress.Parse(userEmail));
         emailMessage.Subject = "Email Confirmation OTP";
         emailMessage.Body = new TextPart(TextFormat.Html)

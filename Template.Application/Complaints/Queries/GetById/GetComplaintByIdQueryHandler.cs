@@ -23,8 +23,11 @@ public class GetComplaintByIdQueryHandler(ILogger<GetComplaintByIdQueryHandler> 
         }
         var result = mapper.Map<ComplaintDto>(complaint);
         var user = await accountRepository.GetUserAsync(complaint.UserId);
-        var lockedByUser = await accountRepository.FindUserByIdOptionalTracking(complaint.LockedBy, true);
-        result.LockedByUserName = lockedByUser.UserName;
+        if (complaint.IsLocked)
+        {
+            var lockedByUser = await accountRepository.FindUserByIdOptionalTracking(complaint.LockedBy, true);
+            result.LockedByUserName = lockedByUser.UserName;
+        }
         result.UserName = user.UserName;
         if (request.IncludeNotes == true)
         {
