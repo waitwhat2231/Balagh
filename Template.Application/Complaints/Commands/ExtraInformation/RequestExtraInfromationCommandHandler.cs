@@ -42,6 +42,7 @@ namespace Template.Application.Complaints.Commands.ExtraInformation
             History sendNotificationHistoryRecord = new History()
             {
                 UserId = currentUser.Id,
+                ComplaintId = request.ComplaintId,
                 CreatedAt = DateTime.UtcNow,
                 ChangeType = Domain.ChangeType.RequestMoreInformation,
                 OldValue = string.Empty,

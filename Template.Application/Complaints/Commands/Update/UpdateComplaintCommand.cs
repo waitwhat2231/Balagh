@@ -13,9 +13,9 @@ public class UpdateComplaintCommand : ICommand<ComplaintDto>
     [BindNever]
     public int ComplaintId { get; set; }
     public int? GovernmentalEntityId { get; set; }
-    public string Location { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public ComplaintStatus NewStatus { get; set; }
+    public string? Location { get; set; } = string.Empty;
+    public string? Description { get; set; } = string.Empty;
+    public ComplaintStatus? NewStatus { get; set; }
 
     public List<IFormFile> ComplaintFiles { get; set; } = [];
 }

@@ -51,11 +51,10 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
         {
             AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.GovermentalEntityChange, existingComplaint.GovernmentalEntityId, request.GovernmentalEntityId);
         }
-
-        if (existingComplaint.Status != request.NewStatus)
+        if (request.NewStatus != null && (existingComplaint.Status != request.NewStatus))
         {
             AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.UpdateStatus, existingComplaint.Status, request.NewStatus);
-            existingComplaint.Status = request.NewStatus;
+            existingComplaint.Status = (ComplaintStatus)request.NewStatus;
         }
 
         /*Processing adding files (hopefully)*/
@@ -83,6 +82,7 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
         }
 
         existingComplaint.Histories.AddRange(historyEntries);
+        await complaintRepository.UpdateAsync(existingComplaint);
         await complaintRepository.SaveChangesAsync();
 
         var result = mapper.Map<ComplaintDto>(existingComplaint);

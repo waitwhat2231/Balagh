@@ -77,9 +77,14 @@ public class CachedComplaintRepository : IComplaintRepository
         throw new NotImplementedException();
     }
 
-    public Task UpdateAsync(Complaint entity)
+    public async Task UpdateAsync(Complaint entity)
     {
-        throw new NotImplementedException();
+        string key = $"complaint-{entity.Id}";
+        if (_memoryCache.TryGetValue(key, out _))
+        {
+            _memoryCache.Remove(key);
+        }
+        await _decorated.UpdateAsync(entity);
     }
 
     public Task<PagedEntity<(Complaint complaint, string userName)>> GetAllComplaintsWithUserName(int pageNum, int pageSize, EnumRoleNames userRole, string UserId)
