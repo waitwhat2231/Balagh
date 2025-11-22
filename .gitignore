@@ -362,3 +362,9 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Template.API/balagh-7044c-firebase-adminsdk-fbsvc-372518fcfe.json
+/.dockerignore
+/docker-compose.yml
+/docker-compose.override.yml
+/Template.API/Dockerfile
+/docker-compose.dcproj
+/launchSettings.json

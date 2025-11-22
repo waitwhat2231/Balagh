@@ -11,7 +11,21 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
   </ItemGroup>
-
+<ItemGroup>
+  <!-- Exclude Docker files from publish -->
+  <None Update="Dockerfile">
+    <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+  </None>
+  <None Update="docker-compose.override.yml">
+    <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+  </None>
+  <None Update="docker-compose.yml">
+    <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+  </None>
+  <None Update=".dockerignore">
+    <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+  </None>
+</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Template.Application\Template.Application.csproj" />
     <ProjectReference Include="..\Template.Infrastructure\Template.Infrastructure.csproj" />
