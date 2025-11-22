@@ -25,7 +25,8 @@ public class ProceedComplaintCommandHandler(ILogger<ProceedComplaintCommandHandl
 
         existingComplaint.IsLocked = true;
         existingComplaint.LockedBy = currentUserId;
-        await complaintRepository.SaveChangesAsync();
+        await complaintRepository.UpdateAsync(existingComplaint);
+        //await complaintRepository.SaveChangesAsync();
 
         var result = mapper.Map<ComplaintDto>(existingComplaint);
         return Result<ComplaintDto>.Success(result);

@@ -87,7 +87,7 @@ public class CachedComplaintRepository : IComplaintRepository
         await _decorated.UpdateAsync(entity);
     }
 
-    public Task<PagedEntity<(Complaint complaint, string userName)>> GetAllComplaintsWithUserName(int pageNum, int pageSize, EnumRoleNames userRole, string UserId)
+    public Task<PagedEntity<GetAllComplaintsMappingDto>> GetAllComplaintsWithUserName(int pageNum, int pageSize, EnumRoleNames userRole, string UserId)
     {
         return _decorated.GetAllComplaintsWithUserName(pageNum, pageSize, userRole, UserId); ;
     }

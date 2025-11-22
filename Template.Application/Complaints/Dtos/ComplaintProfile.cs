@@ -17,17 +17,20 @@ public class ComplaintProfile : Profile
             .ForMember(dest => dest.Histories, opt => opt.MapFrom(src => src.Histories))
             .ReverseMap();
 
-        CreateMap<(Complaint complaint, string userName), ComplaintDto>()
-            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.userName))
-            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.complaint.Location))
-            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.complaint.Description))
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.complaint.Status))
-            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.complaint.UserId))
-            .ForMember(dest => dest.GovernmentalEntityId, opt => opt.MapFrom(src => src.complaint.GovernmentalEntityId))
-            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.complaint.CreatedAt))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.complaint.Id))
-            .ReverseMap();
-
+        /*     CreateMap<(Complaint complaint, string userName), ComplaintDto>()
+                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.userName))
+                 .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.complaint.Location))
+                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.complaint.Description))
+                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.complaint.Status))
+                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.complaint.UserId))
+                 .ForMember(dest => dest.GovernmentalEntityId, opt => opt.MapFrom(src => src.complaint.GovernmentalEntityId))
+                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.complaint.CreatedAt))
+                 .ForMember(dest => dest.IsLocked, opt => opt.MapFrom(src => src.complaint.IsLocked))
+                 .ForMember(dest => dest.LockedBy, opt => opt.MapFrom(src => src.complaint.LockedBy))
+                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.complaint.Id))
+                 .ReverseMap();
+     */
+        CreateMap<ComplaintDto, GetAllComplaintsMappingDto>().ReverseMap();
         CreateMap<History, HistoryDto>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(h => h.User.UserName));
 

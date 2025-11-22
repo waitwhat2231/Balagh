@@ -25,8 +25,8 @@ builder.AddPresentation();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
-builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+//builder.Services.AddReverseProxy()
+//  .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 
 builder.Services.AddCors(options =>
@@ -39,7 +39,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.MapReverseProxy();
+//app.MapReverseProxy();
 
 
 var scope = app.Services.CreateScope(); //for seeders

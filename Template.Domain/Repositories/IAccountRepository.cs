@@ -31,6 +31,7 @@ public interface IAccountRepository
     Task<IdentityResult> UpdateSecurityStampAsync(string userId);
     Task DeleteUser(User user);
     Task<User?> FindUserById(string userId);
+    Task<User?> FindUserByIdOptionalTracking(string userId, bool asNoTracking = false);
     Task<AuthResponse>? LoginUserWithoutDevice(string email, string password);
     Task<List<User>> GetAdmins();
     Task<IdentityResult> AssistantRecoveryPassword(string userId, string newPassword);
