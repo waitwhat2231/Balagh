@@ -7,6 +7,7 @@ namespace Template.API.Controllers;
 public class LoadBalanceTestController : ControllerBase
 {
     [HttpGet]
+    [Route("LoadBalanceTest")]
     public IActionResult Get()
     {
         var instance = Environment.GetEnvironmentVariable("INSTANCE_ID") ?? "unknown";

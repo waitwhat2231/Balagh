@@ -20,7 +20,7 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
     {
         logger.LogInformation("Updating complaint");
         string currentUserId = userContext.GetCurrentUser()!.Id;
-        var dbUser = await accountRepository.FindUserById(currentUserId);
+        var dbUser = await accountRepository.FindUserByIdOptionalTracking(currentUserId, true);
 
         var existingComplaint = await complaintRepository.GetComplaintByIdWithFilesAsync(request.ComplaintId);
         if (existingComplaint == null)
@@ -47,15 +47,15 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
             existingComplaint.Location = request.Location;
         }
 
-        if (existingComplaint.GovernmentalEntityId != request.GovernmentalEntityId)
+        if (request.GovernmentalEntityId != null && existingComplaint.GovernmentalEntityId != request.GovernmentalEntityId)
         {
             AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.GovermentalEntityChange, existingComplaint.GovernmentalEntityId, request.GovernmentalEntityId);
+            existingComplaint.GovernmentalEntityId = (int)request.GovernmentalEntityId;
         }
-
-        if (existingComplaint.Status != request.NewStatus)
+        if (request.NewStatus != null && (existingComplaint.Status != request.NewStatus))
         {
             AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.UpdateStatus, existingComplaint.Status, request.NewStatus);
-            existingComplaint.Status = request.NewStatus;
+            existingComplaint.Status = (ComplaintStatus)request.NewStatus;
         }
 
         /*Processing adding files (hopefully)*/
@@ -83,6 +83,7 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
         }
 
         existingComplaint.Histories.AddRange(historyEntries);
+        await complaintRepository.UpdateAsync(existingComplaint);
         await complaintRepository.SaveChangesAsync();
 
         var result = mapper.Map<ComplaintDto>(existingComplaint);

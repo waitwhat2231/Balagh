@@ -210,7 +210,7 @@ public class AccountRepository(UserManager<User> userManager,
     {
         var emailMessage = new MimeMessage();
         //for etherreal put "darlene.mcdermott@ethereal.email";
-        emailMessage.From.Add(MailboxAddress.Parse("Balaghmail.com"));
+        emailMessage.From.Add(MailboxAddress.Parse("darlene.mcdermott@ethereal.email"));
         emailMessage.To.Add(MailboxAddress.Parse(userEmail));
         emailMessage.Subject = "Email Confirmation OTP";
         emailMessage.Body = new TextPart(TextFormat.Html)
@@ -489,7 +489,15 @@ public class AccountRepository(UserManager<User> userManager,
     {
         return await userManager.FindByIdAsync(userId);
     }
-
+    public async Task<User?> FindUserByIdOptionalTracking(string userId, bool asNoTracking = false)
+    {
+        var query = dbContext.Users.AsQueryable();
+        if (asNoTracking == true)
+        {
+            query = query.AsNoTracking();
+        }
+        return await query.FirstOrDefaultAsync(u => u.Id == userId);
+    }
     public async Task<List<User>> GetAdmins()
     {
         var adminsWithDevices = await dbContext.Users

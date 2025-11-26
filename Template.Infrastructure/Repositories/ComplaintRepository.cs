@@ -23,33 +23,63 @@ public class ComplaintRepository : GenericRepository<Complaint>, IComplaintRepos
             .Include(c => c.ComplaintFiles)
             .FirstOrDefaultAsync(c => c.Id == complaintId);
     }
-    public async Task<PagedEntity<(Complaint complaint, string userName)>> GetAllComplaintsWithUserName(int pageNum, int pageSize, EnumRoleNames userRole, string UserId)
+    public async Task<PagedEntity<GetAllComplaintsMappingDto>> GetAllComplaintsWithUserName(int pageNum, int pageSize, EnumRoleNames userRole, string UserId)
     {
-        var query = dbContext.Complaints.AsQueryable();
+        var query =
+      from c in dbContext.Complaints
+      join u in dbContext.Users on c.UserId equals u.Id into userJoin
+      from u in userJoin.DefaultIfEmpty()
+
+      join lu in dbContext.Users on c.LockedBy equals lu.Id into lockedJoin
+      from lu in lockedJoin.DefaultIfEmpty()
+
+      select new
+      {
+          Complaint = c,
+          u.UserName,
+          LockedByUserName = lu.UserName
+      };
         switch (userRole)
         {
             case EnumRoleNames.User:
-                query = query.Where(c => c.UserId == UserId);
+                query = query.Where(x => x.Complaint.UserId == UserId);
                 break;
             case EnumRoleNames.Employee:
                 var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == UserId);
-                query = query.Where(c => c.GovernmentalEntityId == user.GovernmentalEntityId);
+                query = query.Where(x => x.Complaint.GovernmentalEntityId == user.GovernmentalEntityId);
                 break;
             case EnumRoleNames.Administrator:
                 break;
-
         }
-        var complaintList = await query.Skip((pageNum - 1) * pageSize)
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderByDescending(x => x.Complaint.CreatedAt)
+            .Skip((pageNum - 1) * pageSize)
             .Take(pageSize)
-            .Select(c => new ValueTuple<Complaint, string>(c, c.User.UserName))
+            .AsNoTracking()
+            .Select(x => new GetAllComplaintsMappingDto
+            {
+                Id = x.Complaint.Id,
+                UserId = x.Complaint.UserId,
+                UserName = x.UserName,
+                LockedBy = x.Complaint.LockedBy,
+                LockedByUserName = x.LockedByUserName,
+                Description = x.Complaint.Description,
+                Location = x.Complaint.Location,
+                Status = x.Complaint.Status,
+                GovernmentalEntityId = x.Complaint.GovernmentalEntityId,
+                IsLocked = x.Complaint.IsLocked,
+                CreatedAt = x.Complaint.CreatedAt
+            })
             .ToListAsync();
-        var pagedEntityResult = new PagedEntity<(Complaint complaint, string userName)>()
+
+        return new PagedEntity<GetAllComplaintsMappingDto>()
         {
-            Items = complaintList,
+            Items = items,
+            TotalItems = totalCount,
             PageNumber = pageNum,
             PageSize = pageSize,
-            TotalItems = await dbContext.Complaints.CountAsync()
         };
-        return pagedEntityResult;
     }
 }
