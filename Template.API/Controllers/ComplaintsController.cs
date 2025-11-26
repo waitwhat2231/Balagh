@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Template.Application.Complaints.Commands.AddFile;
 using Template.Application.Complaints.Commands.Create;
+using Template.Application.Complaints.Commands.DeleteFile;
 using Template.Application.Complaints.Commands.ExtraInformation;
 using Template.Application.Complaints.Commands.Proceed;
 using Template.Application.Complaints.Commands.Update;
@@ -95,6 +97,30 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult> RequestExtraInfromation([FromRoute] int complaintId, [FromBody] RequestExtraInfromationCommand command)
     {
         command.ComplaintId = complaintId;
+        var result = await mediator.Send(command);
+        if (!result.SuccessStatus)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+
+    [HttpPost]
+    [Route("AddFile")]
+    public async Task<ActionResult> AddFile([FromForm] AddFileCommand command)
+    {
+        var result = await mediator.Send(command);
+        if (!result.SuccessStatus)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+
+    [HttpDelete]
+    [Route("RemoveFile")]
+    public async Task<ActionResult> AddFile([FromBody] DeleteFileCommand command)
+    {
         var result = await mediator.Send(command);
         if (!result.SuccessStatus)
         {
