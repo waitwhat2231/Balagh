@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Text.Json.Serialization;
 using Template.Application.Abstraction.Commands;
 using Template.Application.Complaints.Dtos;
@@ -17,5 +16,4 @@ public class UpdateComplaintCommand : ICommand<ComplaintDto>
     public string? Description { get; set; } = string.Empty;
     public ComplaintStatus? NewStatus { get; set; }
 
-    public List<IFormFile> ComplaintFiles { get; set; } = [];
 }

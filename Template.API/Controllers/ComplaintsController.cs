@@ -35,7 +35,7 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     [Authorize]
     [HttpPost]
     [Route("UpdateComplaint/{complaintId:int}")]
-    public async Task<ActionResult<ComplaintDto>> UpdateComplaint([FromRoute] int complaintId, [FromForm] UpdateComplaintCommand command)
+    public async Task<ActionResult<ComplaintDto>> UpdateComplaint([FromRoute] int complaintId, [FromBody] UpdateComplaintCommand command)
     {
         command.ComplaintId = complaintId;
         var result = await mediator.Send(command);

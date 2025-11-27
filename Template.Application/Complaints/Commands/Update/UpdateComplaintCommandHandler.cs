@@ -58,23 +58,6 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
             existingComplaint.Status = (ComplaintStatus)request.NewStatus;
         }
 
-        /*Processing adding files (hopefully)*/
-        if (request.ComplaintFiles.Count > 0)
-        {
-            foreach (var formFile in request.ComplaintFiles)
-            {
-                var storedFilePath = await fileService.SaveFileAsync(formFile, "Uploads/Complaints", [".jpg", ".png", ".pdf"]);
-
-                existingComplaint.ComplaintFiles.Add(new ComplaintFile
-                {
-                    ComplaintId = existingComplaint.Id,
-                    Path = storedFilePath,
-                });
-
-                AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.AddFile, "", storedFilePath);
-            }
-        }
-
         /*Unlocking the complaint (hopefully)*/
         if (request.NewStatus == ComplaintStatus.Done)
         {
