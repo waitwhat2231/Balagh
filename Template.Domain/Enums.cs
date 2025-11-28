@@ -17,7 +17,8 @@ public enum ChangeType
     UpdateLocation,
     GovermentalEntityChange,
     UpdateStatus,
-    AddFile
+    AddFile,
+    DeleteFile
 }
 
 public enum NotificationType

@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Text.Json;
 using Template.Application.Abstraction.Commands;
+using Template.Application.Users;
+using Template.Domain;
 using Template.Domain.Entities;
 using Template.Domain.Entities.ResponseEntity;
 using Template.Domain.Exceptions;
@@ -9,19 +12,23 @@ using Template.Domain.Services;
 namespace Template.Application.Complaints.Commands.AddFile;
 
 public class AddFileCommandHandler(ILogger<AddFileCommandHandler> logger, IComplaintRepository complaintRepository,
+    IUserContext userContext,
     IFileService fileService)
     : ICommandHandler<AddFileCommand>
 {
     public async Task<Result> Handle(AddFileCommand request, CancellationToken cancellationToken)
     {
         logger.LogInformation("Adding new file");
-
+        var currentUser = userContext.GetCurrentUser();
         var dbComplaint = await complaintRepository.GetComplaintByIdWithFilesAsync(request.ComplaintId);
         if (dbComplaint == null)
         {
             throw new NotFoundException("Complain", request.ComplaintId.ToString());
         }
-
+        if (dbComplaint.UserId != currentUser.Id)
+        {
+            throw new ForbiddenException("Editing this Complaint");
+        }
         var newFilePath = await fileService.SaveFileAsync(request.NewFile, "Uploads/Complaints", [".jpg", ".png", ".pdf"]);
         dbComplaint.ComplaintFiles.Add(new ComplaintFile
         {
@@ -29,8 +36,21 @@ public class AddFileCommandHandler(ILogger<AddFileCommandHandler> logger, ICompl
             Path = newFilePath,
             ComplaintId = dbComplaint.Id,
         });
-
+        AddHistory(dbComplaint.Id, currentUser.Id, dbComplaint.Histories, ChangeType.AddFile, "", request.NewFile.FileName);
         await complaintRepository.SaveChangesAsync();
         return Result.Success();
+    }
+    private static void AddHistory(int complaintId, string userId, List<History> historyEntries, ChangeType type, object oldValue, object newValue, object? details = null)
+    {
+        historyEntries.Add(new History
+        {
+            ComplaintId = complaintId,
+            UserId = userId,
+            ChangeType = type,
+            OldValue = JsonSerializer.Serialize(oldValue),
+            NewValue = JsonSerializer.Serialize(newValue),
+            ChangeDetails = details != null ? JsonSerializer.Serialize(details) : string.Empty,
+            CreatedAt = DateTime.UtcNow
+        });
     }
 }
