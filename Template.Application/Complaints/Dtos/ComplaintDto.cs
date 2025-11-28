@@ -1,4 +1,5 @@
-﻿using Template.Application.Complaints.Notes.Dtos;
+﻿using System.ComponentModel.DataAnnotations;
+using Template.Application.Complaints.Notes.Dtos;
 using Template.Domain;
 
 namespace Template.Application.Complaints.Dtos;
@@ -17,6 +18,8 @@ public class ComplaintDto
     public string LockedBy { get; set; } = string.Empty;
     public string LockedByUserName { get; set; } = string.Empty;
     public bool IsLocked { get; set; }
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = [];
     public List<ComplaintFileDto> ComplaintFiles { get; set; } = [];
     public List<HistoryDto> Histories { get; set; } = [];
     public List<NoteDto> Notes { get; set; } = [];

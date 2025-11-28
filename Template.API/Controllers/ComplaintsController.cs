@@ -80,9 +80,8 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     [HttpPost]
     [Authorize(Roles = $"{nameof(EnumRoleNames.Employee)},{nameof(EnumRoleNames.Administrator)}")]
     [Route("ProceedComplaint/{complaintId:int}")]
-    public async Task<ActionResult<ComplaintDto>> ProceedComplaint([FromRoute] int complaintId)
+    public async Task<ActionResult<ComplaintDto>> ProceedComplaint([FromRoute] int complaintId, [FromBody] ProceedComplaintCommand command)
     {
-        var command = new ProceedComplaintCommand();
         command.ComplaintId = complaintId;
         var result = await mediator.Send(command);
         if (!result.SuccessStatus)

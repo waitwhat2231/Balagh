@@ -22,10 +22,10 @@ public class ProceedComplaintCommandHandler(ILogger<ProceedComplaintCommandHandl
         {
             return Result<ComplaintDto>.Failure(new List<string> { "Complaint not found " });
         }
-
+        existingComplaint.RowVersion = request.RowVersion;
         existingComplaint.IsLocked = true;
         existingComplaint.LockedBy = currentUserId;
-        await complaintRepository.UpdateAsync(existingComplaint);
+        await complaintRepository.SaveChangesAsync();
         //await complaintRepository.SaveChangesAsync();
 
         var result = mapper.Map<ComplaintDto>(existingComplaint);

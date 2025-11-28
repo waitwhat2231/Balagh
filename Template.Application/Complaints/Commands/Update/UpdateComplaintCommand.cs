@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Template.Application.Abstraction.Commands;
 using Template.Application.Complaints.Dtos;
@@ -15,5 +16,7 @@ public class UpdateComplaintCommand : ICommand<ComplaintDto>
     public string? Location { get; set; } = string.Empty;
     public string? Description { get; set; } = string.Empty;
     public ComplaintStatus? NewStatus { get; set; }
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = [];
 
 }

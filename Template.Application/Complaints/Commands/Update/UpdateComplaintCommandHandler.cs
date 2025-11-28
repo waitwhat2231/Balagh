@@ -35,6 +35,7 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
         var historyEntries = new List<History>();
 
         /*Processing changing fields (hopefully)*/
+        existingComplaint.RowVersion = request.RowVersion;
         if (existingComplaint.Description != request.Description && !string.IsNullOrEmpty(request.Description))
         {
             AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.UpdateDescription, existingComplaint.Description, request.Description);
@@ -66,7 +67,6 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
         }
 
         existingComplaint.Histories.AddRange(historyEntries);
-        await complaintRepository.UpdateAsync(existingComplaint);
         await complaintRepository.SaveChangesAsync();
 
         var result = mapper.Map<ComplaintDto>(existingComplaint);

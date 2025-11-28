@@ -1,4 +1,6 @@
-﻿namespace Template.Domain.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Template.Domain.Entities
 {
     public class GetAllComplaintsMappingDto
     {
@@ -13,6 +15,8 @@
         public ComplaintStatus Status { get; set; }
         public string LockedBy { get; set; } = string.Empty;
         public string LockedByUserName { get; set; } = string.Empty;
+        [Timestamp]
+        public byte[] RowVersion { get; set; } = [];
         public bool IsLocked { get; set; }
     }
 }
