@@ -9,5 +9,5 @@ public interface IComplaintRepository : IGenericRepository<Complaint>
     Task<PagedEntity<GetAllComplaintsMappingDto>> GetAllComplaintsWithUserName(int pageNum, int pageSize, EnumRoleNames userRole, string UserId);
     public Task<Complaint?> GetComplaintByIdWithFilesAsync(int complaintId);
     /*    public Task AddFileAsync(ComplaintFile complaintFile);
-        public Task DeleteFileAsync(int complaintFileId);*/
+public Task DeleteFileAsync(int complaintFileId);*/
 }

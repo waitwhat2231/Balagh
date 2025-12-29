@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Template.Application.Reports.Services;
 using Template.Domain.Entities;
 using Template.Domain.Repositories;
 using Template.Domain.Services;
@@ -68,6 +69,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IGovermentalEntitiesRepository, GovermentalEntitiesRepository>();
         services.AddScoped<IRolesSeeder, RolesSeeder>();
+        services.AddScoped<IReportService, ReportService>();
 
 
         // firebase
