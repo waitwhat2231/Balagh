@@ -2,7 +2,6 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
-using Template.Domain.Entities;
 using TripPlanner.API.Middlewares;
 
 namespace Template.API.Extensions
@@ -11,6 +10,7 @@ namespace Template.API.Extensions
     {
         public static void AddPresentation(this WebApplicationBuilder builder)
         {
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ExceptionHandlerMiddleware>();
             builder.Services.AddAuthentication(options =>
             {
@@ -63,7 +63,7 @@ namespace Template.API.Extensions
             builder.Services.AddSwaggerGen();
 
 
-            builder.Services.AddIdentityApiEndpoints<User>();
+            //builder.Services.AddIdentityApiEndpoints<User>();
         }
     }
 }

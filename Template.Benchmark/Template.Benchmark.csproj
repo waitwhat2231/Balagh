@@ -14,5 +14,8 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Template.Application\Template.Application.csproj" />
 	</ItemGroup>
+	<PropertyGroup>
+		<IsPublishable>false</IsPublishable>
+	</PropertyGroup>
 
 </Project>

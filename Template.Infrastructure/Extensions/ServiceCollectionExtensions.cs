@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 using Template.Application.Reports.Services;
 using Template.Domain.Entities;
 using Template.Domain.Repositories;
@@ -85,22 +83,22 @@ public static class ServiceCollectionExtensions
 
 
         //Telemetry For Tracing 
-        services.AddOpenTelemetry()
-            .ConfigureResource(resource => resource.AddService("Balagh Service"))
-            .WithTracing(trace =>
-            {
-                trace
-                .AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation()
-                .AddEntityFrameworkCoreInstrumentation(options =>
-                {
-                    options.EnrichWithIDbCommand = (activity, command) =>
-                    {
-                        activity.SetTag("db.command.timeout", command.CommandTimeout);
-                    };
-                });
-                trace.AddOtlpExporter(options => options.Endpoint = new Uri("http://tracingDashboard:18889"));
+        //services.AddOpenTelemetry()
+        //    .ConfigureResource(resource => resource.AddService("Balagh Service"))
+        //    .WithTracing(trace =>
+        //    {
+        //        trace
+        //        .AddAspNetCoreInstrumentation()
+        //        .AddHttpClientInstrumentation()
+        //        .AddEntityFrameworkCoreInstrumentation(options =>
+        //        {
+        //            options.EnrichWithIDbCommand = (activity, command) =>
+        //            {
+        //                activity.SetTag("db.command.timeout", command.CommandTimeout);
+        //            };
+        //        });
+        //        trace.AddOtlpExporter(options => options.Endpoint = new Uri("http://tracingDashboard:18889"));
 
-            });
+        //    });
     }
 }
