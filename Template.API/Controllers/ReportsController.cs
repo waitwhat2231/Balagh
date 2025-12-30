@@ -14,25 +14,25 @@ namespace Template.API.Controllers
     public class ReportsController(IMediator mediator) : ControllerBase
     {
         [HttpGet("status")]
-        [Authorize(nameof(EnumRoleNames.Administrator))]
+        [Authorize(Roles = nameof(EnumRoleNames.Administrator))]
         public async Task<ActionResult> GetComplaintsReportsForStatuses(DateTime from, DateTime to, int? govermentalEntityId = null, string? location = null)
         {
             var result = await mediator.Send(new GetComplaintReportForAllStatusesQuery(from, to, govermentalEntityId, location));
             return Ok(result.Data);
         }
         [HttpGet("by-gov-entity")]
-        [Authorize(nameof(EnumRoleNames.Administrator))]
+        [Authorize(Roles = nameof(EnumRoleNames.Administrator))]
         public async Task<ActionResult> GetComplaintReportForGovermentalEntities(DateTime from, DateTime to, ComplaintStatus? status = null, string? location = null)
         {
             var result = await mediator.Send(new GetComplaintReportForAllGovermentalEntitiesQuery(from, to, null, location, status));
-            return Ok(result);
+            return Ok(result.Data);
         }
         [HttpGet("by-time")]
-        [Authorize(nameof(EnumRoleNames.Administrator))]
+        [Authorize(Roles = nameof(EnumRoleNames.Administrator))]
         public async Task<ActionResult> GetComplaintReportForYearsAndMonths(ComplaintStatus? status = null, int? govermentalEntityId = null, string? location = null)
         {
             var result = await mediator.Send(new GetComplaintTimeReportQuery(govermentalEntityId, location, status));
-            return Ok(result);
+            return Ok(result.Data);
         }
     }
 }

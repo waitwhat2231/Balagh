@@ -10,7 +10,7 @@ namespace Template.Infrastructure.Services
     {
         public async Task<List<ComplaintsStatusReportCountDto>> GetComplaintReportForStatuses(DateTime from, DateTime to, int? govermentalEntityId, string? location)
         {
-            var count = dbContext.Complaints.Count();
+            var count = await dbContext.Complaints.CountAsync();
             var query = dbContext.Complaints.Where(c => c.CreatedAt > from && c.CreatedAt <= to).AsQueryable();
             if (govermentalEntityId.HasValue)
             {
@@ -24,13 +24,13 @@ namespace Template.Infrastructure.Services
             {
                 Status = s.Key,
                 ComplaintCount = s.Count(),
-                PercentageOfTotalComplaints = s.Count() / count * 100
+                PercentageOfTotalComplaints = (decimal)s.Count() / count * 100
             }).ToListAsync();
 
         }
         public async Task<List<ComplaintGovermentalEntitiesReportDto>> GetComplaintReportForGovermentalEntities(DateTime from, DateTime to, ComplaintStatus? status, string? location)
         {
-            var count = dbContext.Complaints.Count();
+            var count = await dbContext.Complaints.CountAsync();
             var query = dbContext.Complaints.Where(c => c.CreatedAt > from && c.CreatedAt <= to).AsQueryable();
             if (status.HasValue)
             {
@@ -49,12 +49,12 @@ namespace Template.Infrastructure.Services
                 GovermentalEntityId = s.Key.GovernmentalEntityId,
                 GovermentalEntityName = s.Key.Name,
                 ComplaintCount = s.Count(),
-                PercentageOfTotalComplaints = s.Count() / count * 100
+                PercentageOfTotalComplaints = (decimal)s.Count() / count * 100
             }).ToListAsync();
         }
         public async Task<List<ComplaintTimeBasedReportDto>> GetComplaintReportBasedOnTime(int? govermentalEntityId, ComplaintStatus? status = null, string? location = null)
         {
-            var count = dbContext.Complaints.Count();
+            var count = await dbContext.Complaints.CountAsync();
             var query = dbContext.Complaints.AsQueryable();
             if (govermentalEntityId.HasValue)
             {
@@ -78,7 +78,7 @@ namespace Template.Infrastructure.Services
                     Year = s.Key.Year,
                     Month = s.Key.Month,
                     ComplaintCount = s.Count(),
-                    PercentageOfTotalComplaints = s.Count() / count * 100
+                    PercentageOfTotalComplaints = (decimal)s.Count() / count * 100
                 }).ToListAsync();
         }
 
