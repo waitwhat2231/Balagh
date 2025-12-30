@@ -1,7 +1,11 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Template.Application.Reports.Queries.GovermentalEntities;
 using Template.Application.Reports.Queries.Statuses;
+using Template.Application.Reports.Queries.Time;
 using Template.Domain;
+using Template.Domain.Enums;
 
 namespace Template.API.Controllers
 {
@@ -10,20 +14,25 @@ namespace Template.API.Controllers
     public class ReportsController(IMediator mediator) : ControllerBase
     {
         [HttpGet("status")]
+        [Authorize(nameof(EnumRoleNames.Administrator))]
         public async Task<ActionResult> GetComplaintsReportsForStatuses(DateTime from, DateTime to, int? govermentalEntityId = null, string? location = null)
         {
             var result = await mediator.Send(new GetComplaintReportForAllStatusesQuery(from, to, govermentalEntityId, location));
             return Ok(result.Data);
         }
         [HttpGet("by-gov-entity")]
-        public async Task<ActionResult> GetComplaintReportForGovermentalEntities(DateTime from, DateTime to, ComplaintStatus status, string location)
+        [Authorize(nameof(EnumRoleNames.Administrator))]
+        public async Task<ActionResult> GetComplaintReportForGovermentalEntities(DateTime from, DateTime to, ComplaintStatus? status = null, string? location = null)
         {
-            return Ok();
+            var result = await mediator.Send(new GetComplaintReportForAllGovermentalEntitiesQuery(from, to, null, location, status));
+            return Ok(result);
         }
-        [HttpGet("by-location-name")]
-        public async Task<ActionResult> GetComplaintReportForGovermentalEntities(DateTime from, DateTime to, ComplaintStatus status, int govermentalEntityId, string location)
+        [HttpGet("by-time")]
+        [Authorize(nameof(EnumRoleNames.Administrator))]
+        public async Task<ActionResult> GetComplaintReportForYearsAndMonths(ComplaintStatus? status = null, int? govermentalEntityId = null, string? location = null)
         {
-            return Ok();
+            var result = await mediator.Send(new GetComplaintTimeReportQuery(govermentalEntityId, location, status));
+            return Ok(result);
         }
     }
 }
