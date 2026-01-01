@@ -9,7 +9,7 @@ namespace Template.Application.Reports.Queries.GovermentalEntities
     {
         public async Task<Result<List<ComplaintGovermentalEntitiesReportDto>>> Handle(GetComplaintReportForAllGovermentalEntitiesQuery request, CancellationToken cancellationToken)
         {
-            return Result.Success(await reportService.GetComplaintReportForGovermentalEntities((DateTime)request.From, (DateTime)request.To, request.Status, request.Location));
+            return Result.Success(await reportService.GetComplaintReportForGovermentalEntities(request.From, request.To, request.Status, request.Location));
         }
     }
 }

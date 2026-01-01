@@ -8,10 +8,18 @@ namespace Template.Infrastructure.Services
 {
     class ReportService(TemplateDbContext dbContext) : IReportService
     {
-        public async Task<List<ComplaintsStatusReportCountDto>> GetComplaintReportForStatuses(DateTime from, DateTime to, int? govermentalEntityId, string? location)
+        public async Task<List<ComplaintsStatusReportCountDto>> GetComplaintReportForStatuses(DateTime? from = null, DateTime? to = null, int? govermentalEntityId = null, string? location = null)
         {
             var count = await dbContext.Complaints.CountAsync();
-            var query = dbContext.Complaints.Where(c => c.CreatedAt > from && c.CreatedAt <= to).AsQueryable();
+            var query = dbContext.Complaints.AsQueryable();
+            if (from.HasValue)
+            {
+                query = query.Where(c => c.CreatedAt >= from);
+            }
+            if (to.HasValue)
+            {
+                query = query.Where(c => c.CreatedAt <= to);
+            }
             if (govermentalEntityId.HasValue)
             {
                 query = query.Where(c => c.GovernmentalEntityId == govermentalEntityId);
@@ -28,10 +36,18 @@ namespace Template.Infrastructure.Services
             }).ToListAsync();
 
         }
-        public async Task<List<ComplaintGovermentalEntitiesReportDto>> GetComplaintReportForGovermentalEntities(DateTime from, DateTime to, ComplaintStatus? status, string? location)
+        public async Task<List<ComplaintGovermentalEntitiesReportDto>> GetComplaintReportForGovermentalEntities(DateTime? from, DateTime? to, ComplaintStatus? status, string? location)
         {
             var count = await dbContext.Complaints.CountAsync();
-            var query = dbContext.Complaints.Where(c => c.CreatedAt > from && c.CreatedAt <= to).AsQueryable();
+            var query = dbContext.Complaints.AsQueryable();
+            if (from.HasValue)
+            {
+                query = query.Where(c => c.CreatedAt >= from);
+            }
+            if (to.HasValue)
+            {
+                query = query.Where(c => c.CreatedAt <= to);
+            }
             if (status.HasValue)
             {
                 query = query.Where(c => c.Status == status);

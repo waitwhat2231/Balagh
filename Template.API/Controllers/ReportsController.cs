@@ -15,14 +15,14 @@ namespace Template.API.Controllers
     {
         [HttpGet("status")]
         [Authorize(Roles = nameof(EnumRoleNames.Administrator))]
-        public async Task<ActionResult> GetComplaintsReportsForStatuses(DateTime from, DateTime to, int? govermentalEntityId = null, string? location = null)
+        public async Task<ActionResult> GetComplaintsReportsForStatuses(DateTime? from = null, DateTime? to = null, int? govermentalEntityId = null, string? location = null)
         {
             var result = await mediator.Send(new GetComplaintReportForAllStatusesQuery(from, to, govermentalEntityId, location));
             return Ok(result.Data);
         }
         [HttpGet("by-gov-entity")]
         [Authorize(Roles = nameof(EnumRoleNames.Administrator))]
-        public async Task<ActionResult> GetComplaintReportForGovermentalEntities(DateTime from, DateTime to, ComplaintStatus? status = null, string? location = null)
+        public async Task<ActionResult> GetComplaintReportForGovermentalEntities(DateTime? from = null, DateTime? to = null, ComplaintStatus? status = null, string? location = null)
         {
             var result = await mediator.Send(new GetComplaintReportForAllGovermentalEntitiesQuery(from, to, null, location, status));
             return Ok(result.Data);

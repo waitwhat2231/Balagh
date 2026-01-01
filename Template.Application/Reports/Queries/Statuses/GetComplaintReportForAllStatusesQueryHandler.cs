@@ -9,7 +9,7 @@ namespace Template.Application.Reports.Queries.Statuses
     {
         public async Task<Result<List<ComplaintsStatusReportCountDto>>> Handle(GetComplaintReportForAllStatusesQuery request, CancellationToken cancellationToken)
         {
-            return Result.Success(await reportService.GetComplaintReportForStatuses((DateTime)request.From, (DateTime)request.To, request.GovermentalEntityId, request.Location));
+            return Result.Success(await reportService.GetComplaintReportForStatuses(request.From, request.To, request.GovermentalEntityId, request.Location));
         }
     }
 }
