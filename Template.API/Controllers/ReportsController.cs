@@ -25,7 +25,7 @@ namespace Template.API.Controllers
         }
 
         [HttpGet("status/export")]
-        //[Authorize(Roles = nameof(EnumRoleNames.Administrator))]
+        [Authorize(Roles = nameof(EnumRoleNames.Administrator))]
         public async Task<ActionResult> GenerateStatusReportPdf(DateTime? from = null, DateTime? to = null, int? govermentalEntityId = null, string? location = null)
         {
             var result = await mediator.Send(new GenerateStatusReportAsPdfQuery(from, to, govermentalEntityId, location));
@@ -45,7 +45,7 @@ namespace Template.API.Controllers
 
 
         [HttpGet("by-gov-entity/export")]
-        // [Authorize(Roles = nameof(EnumRoleNames.Administrator))]
+        [Authorize(Roles = nameof(EnumRoleNames.Administrator))]
         public async Task<ActionResult> GenerateGovermentalEntityReportPdf(DateTime? from = null, DateTime? to = null, ComplaintStatus? status = null, string? location = null)
         {
             var result = await mediator.Send(new GenerateGovermentalEntityReportAsPdfQuery(from, to, null, location, status));
@@ -66,7 +66,7 @@ namespace Template.API.Controllers
 
 
         [HttpGet("by-time/export")]
-        //[Authorize(Roles = nameof(EnumRoleNames.Administrator))]
+        [Authorize(Roles = nameof(EnumRoleNames.Administrator))]
         public async Task<ActionResult> GenerateTimeBasedReportPdf(ComplaintStatus? status = null, int? govermentalEntityId = null, string? location = null)
         {
             var result = await mediator.Send(new GenerateTimeBasedReportPdfQuery(govermentalEntityId, location, status));
