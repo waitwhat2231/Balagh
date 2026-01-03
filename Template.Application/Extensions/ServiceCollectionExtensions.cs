@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
+using QuestPDF.Infrastructure;
+using Template.Application.PDFFilesHelper;
 using Template.Application.Users;
 
 
@@ -18,6 +20,8 @@ public static class ServiceCollectionExtensions
                 .AddFluentValidationAutoValidation();
 
         services.AddScoped<IUserContext, UserContext>();
+        services.AddScoped<IPdfExportService, PdfExportService>();
+        QuestPDF.Settings.License = LicenseType.Community;
 
         services.AddAutoMapper(applicationAssembly);
 
