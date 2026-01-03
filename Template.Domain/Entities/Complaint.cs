@@ -14,7 +14,8 @@ public class Complaint
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public ComplaintStatus Status { get; set; }
     public bool IsLocked { get; set; }
-    public string LockedBy { get; set; } = string.Empty;
+    public string? LockedBy { get; set; }
+    public User? LockedByUser { get; set; }
     public bool IsDeleted { get; set; }
     [Timestamp]
     public byte[] RowVersion { get; set; } = [];

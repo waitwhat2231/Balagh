@@ -17,6 +17,7 @@ public class ComplaintRepository : GenericRepository<Complaint>, IComplaintRepos
     public async Task<Complaint?> GetComplaintByIdWithFilesAsync(int complaintId)
     {
         return await dbContext.Complaints
+            .Include(c => c.GovernmentalEntity)
             .Include(c => c.User)
             .Include(c => c.Histories)
                 .ThenInclude(h => h.User)
@@ -25,20 +26,16 @@ public class ComplaintRepository : GenericRepository<Complaint>, IComplaintRepos
     }
     public async Task<PagedEntity<GetAllComplaintsMappingDto>> GetAllComplaintsWithUserName(int pageNum, int pageSize, EnumRoleNames userRole, string UserId)
     {
-        var query =
-      from c in dbContext.Complaints
-      join u in dbContext.Users on c.UserId equals u.Id into userJoin
-      from u in userJoin.DefaultIfEmpty()
-
-      join lu in dbContext.Users on c.LockedBy equals lu.Id into lockedJoin
-      from lu in lockedJoin.DefaultIfEmpty()
-
-      select new
-      {
-          Complaint = c,
-          u.UserName,
-          LockedByUserName = lu.UserName
-      };
+        var query = dbContext.Complaints
+            .Select(c =>
+            new
+            {
+                Complaint = c,
+                Username = c.User.UserName,
+                LockedByUserName = c.LockedByUser.UserName,
+                GovermentalEntityName = c.GovernmentalEntity.Name,
+            }
+            );
         switch (userRole)
         {
             case EnumRoleNames.User:
@@ -62,7 +59,7 @@ public class ComplaintRepository : GenericRepository<Complaint>, IComplaintRepos
             {
                 Id = x.Complaint.Id,
                 UserId = x.Complaint.UserId,
-                UserName = x.UserName,
+                UserName = x.Username!,
                 LockedBy = x.Complaint.LockedBy,
                 LockedByUserName = x.LockedByUserName,
                 Description = x.Complaint.Description,
@@ -70,7 +67,8 @@ public class ComplaintRepository : GenericRepository<Complaint>, IComplaintRepos
                 Status = x.Complaint.Status,
                 GovernmentalEntityId = x.Complaint.GovernmentalEntityId,
                 IsLocked = x.Complaint.IsLocked,
-                CreatedAt = x.Complaint.CreatedAt
+                CreatedAt = x.Complaint.CreatedAt,
+                GovermentalEntityName = x.GovermentalEntityName
             })
             .ToListAsync();
 

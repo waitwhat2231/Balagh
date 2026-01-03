@@ -7,6 +7,7 @@ public class User : IdentityUser
     public int? GovernmentalEntityId { get; set; }
     public GovernmentalEntity? GovernmentalEntity { get; set; }
     public List<Complaint> Complaints { get; set; } = [];
+    public List<Complaint> LockedComplaints { get; set; } = [];
     public List<Device> Devices { get; set; } = [];
     public List<Note> Notes { get; set; } = [];
     public List<History> Histories { get; set; } = [];

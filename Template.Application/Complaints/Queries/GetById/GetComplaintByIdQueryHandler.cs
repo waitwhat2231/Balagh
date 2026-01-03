@@ -22,6 +22,7 @@ public class GetComplaintByIdQueryHandler(ILogger<GetComplaintByIdQueryHandler> 
             throw new InvalidOperationException("Complaint not found");
         }
         var result = mapper.Map<ComplaintDto>(complaint);
+        // result.GovermentalEntityName = complaint.GovernmentalEntity.Name;
         var user = await accountRepository.GetUserAsync(complaint.UserId);
         if (complaint.IsLocked)
         {

@@ -10,11 +10,12 @@ namespace Template.Domain.Entities
 
         public DateTime CreatedAt { get; set; }
         public int GovernmentalEntityId { get; set; }
+        public string GovermentalEntityName { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public ComplaintStatus Status { get; set; }
-        public string LockedBy { get; set; } = string.Empty;
-        public string LockedByUserName { get; set; } = string.Empty;
+        public string? LockedBy { get; set; } = string.Empty;
+        public string? LockedByUserName { get; set; } = string.Empty;
         [Timestamp]
         public byte[] RowVersion { get; set; } = [];
         public bool IsLocked { get; set; }

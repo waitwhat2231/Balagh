@@ -43,6 +43,14 @@ public class TemplateDbContext(DbContextOptions<TemplateDbContext> options) : Id
            .HasForeignKey(c => c.UserId)
            .OnDelete(DeleteBehavior.NoAction);
 
+
+        //Complaint → User for locked by
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.LockedComplaints)
+            .WithOne(c => c.LockedByUser)
+            .HasForeignKey(c => c.LockedBy)
+            .OnDelete(DeleteBehavior.NoAction);
+
         // Complaint → ComplaintFiles
         modelBuilder.Entity<Complaint>()
             .HasMany(c => c.ComplaintFiles)

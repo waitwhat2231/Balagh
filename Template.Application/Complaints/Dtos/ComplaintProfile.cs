@@ -15,6 +15,7 @@ public class ComplaintProfile : Profile
         CreateMap<Complaint, ComplaintDto>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
             .ForMember(dest => dest.Histories, opt => opt.MapFrom(src => src.Histories))
+            .ForMember(dest => dest.GovermentalEntityName, opt => opt.MapFrom(src => src.GovernmentalEntity.Name))
             .ReverseMap();
 
         /*     CreateMap<(Complaint complaint, string userName), ComplaintDto>()
