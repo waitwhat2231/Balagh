@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Application.Notification.Queries.CurrentUserNotifications;
 using Template.Application.Tokens.Commands;
-using Template.Application.Users;
 using Template.Application.Users.Commands;
 using Template.Application.Users.Commands.ConfirmEmail;
 using Template.Application.Users.Dtos;
@@ -13,7 +12,7 @@ namespace Template.API.Controllers
 {
     [ApiController]
     [Route("api/users")]
-    public class UsersController(IMediator mediator, IUserContext userContext) : ControllerBase
+    public class UsersController(IMediator mediator) : ControllerBase
     {
 
         [HttpPost("register")]

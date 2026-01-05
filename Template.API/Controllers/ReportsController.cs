@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Application.Reports.Queries.GovermentalEntities;
@@ -14,6 +15,7 @@ namespace Template.API.Controllers
 {
     [ApiController]
     [Route("api/reports")]
+    [ApiVersion("1.0")]
     public class ReportsController(IMediator mediator) : ControllerBase
     {
         [HttpGet("status")]

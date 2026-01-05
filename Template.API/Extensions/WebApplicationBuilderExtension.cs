@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Asp.Versioning;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using Template.API.AOP;
 using TripPlanner.API.Middlewares;
 
 namespace Template.API.Extensions
@@ -11,6 +14,37 @@ namespace Template.API.Extensions
         public static void AddPresentation(this WebApplicationBuilder builder)
         {
             builder.Services.AddHttpContextAccessor();
+
+
+            builder.Services.AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new QueryStringApiVersionReader("api-version"),
+                    new HeaderApiVersionReader("X-Version"),
+                    new MediaTypeApiVersionReader("ver")
+                    );
+            }).AddMvc()
+            .AddApiExplorer(options =>
+            {
+                // the default is ToString(), but we want "'v'major[.minor][-status]"
+                options.GroupNameFormat = "'v'VVV";
+
+                // if we have both parts, decided how to format the group
+                // from the example: "Sales - v1"
+                options.FormatGroupName = (group, version) => $"{group} - {version}";
+            });
+
+
+            ;
+
+            builder.Services.AddTransient(
+                typeof(IPipelineBehavior<,>),
+                typeof(LoggingBehavior<,>)
+                );
+
             builder.Services.AddScoped<ExceptionHandlerMiddleware>();
             builder.Services.AddAuthentication(options =>
             {
@@ -27,7 +61,7 @@ namespace Template.API.Extensions
                     ClockSkew = TimeSpan.Zero,
                     ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
                     ValidAudience = builder.Configuration["JwtSettings:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]!)),
                 };
             }
             );
