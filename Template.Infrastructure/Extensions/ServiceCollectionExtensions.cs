@@ -71,7 +71,7 @@ public static class ServiceCollectionExtensions
 
 
         // firebase
-        var firebaseKeyPath = Path.Combine(Directory.GetCurrentDirectory(), configuration["Firebase:ServiceAccountFilePath"]);
+        var firebaseKeyPath = Path.Combine(Directory.GetCurrentDirectory(), configuration["Firebase:ServiceAccountFilePath"]!);
 
         if (FirebaseApp.DefaultInstance == null)
         {

@@ -27,7 +27,7 @@ public class TokenRepository(IConfiguration configuration, UserManager<User> use
             return null;
         }
 
-        var securitykey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"]));
+        var securitykey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"]!));
         var credintials = new SigningCredentials(securitykey, SecurityAlgorithms.HmacSha256);
         var roles = await userManager.GetRolesAsync(_user);
         var role_claims = roles.Select(x => new Claim(ClaimTypes.Role, x));
@@ -35,7 +35,7 @@ public class TokenRepository(IConfiguration configuration, UserManager<User> use
         var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Sub,_user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email,_user.Email),
+                new Claim(JwtRegisteredClaimNames.Email,_user.Email!),
                 //new Claim(JwtRegisteredClaimNames.Name, _user.UserName)
 
             }.Union(userClaims).Union(role_claims);
@@ -68,13 +68,13 @@ public class TokenRepository(IConfiguration configuration, UserManager<User> use
 
     public async Task<AuthResponse?> VerifyRefreshToken(RefreshTokenRequest request)
     {
-        _user = await userManager.FindByIdAsync(request.user_id);
+        _user = await userManager.FindByIdAsync(request.user_id!);
         if (_user is null)
         {
             return null;
         }
 
-        var isValidRefreshToken = await userManager.VerifyUserTokenAsync(_user, _loginProvidor, _refreshToken, request.RefreshToken);
+        var isValidRefreshToken = await userManager.VerifyUserTokenAsync(_user, _loginProvidor, _refreshToken, request.RefreshToken!);
         if (isValidRefreshToken)
         {
             var token = await GenerateToken(_user.Id.ToString());
@@ -106,7 +106,7 @@ public class TokenRepository(IConfiguration configuration, UserManager<User> use
             ValidateAudience = true,
             ValidAudience = configuration["JwtSettings:Audience"],
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"])),
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"]!)),
             ValidateLifetime = false
         };
         var tokenHandler = new JwtSecurityTokenHandler();

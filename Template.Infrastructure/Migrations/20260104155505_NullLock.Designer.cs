@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Template.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Template.Infrastructure.Persistence;
 namespace Template.Infrastructure.Migrations
 {
     [DbContext(typeof(TemplateDbContext))]
-    partial class TemplateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260104155505_NullLock")]
+    partial class NullLock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -207,7 +210,7 @@ namespace Template.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Complaints", (string)null);
+                    b.ToTable("Complaints");
                 });
 
             modelBuilder.Entity("Template.Domain.Entities.ComplaintFile", b =>
@@ -232,7 +235,7 @@ namespace Template.Infrastructure.Migrations
 
                     b.HasIndex("ComplaintId");
 
-                    b.ToTable("ComplaintFiles", (string)null);
+                    b.ToTable("ComplaintFiles");
                 });
 
             modelBuilder.Entity("Template.Domain.Entities.Device", b =>
@@ -261,7 +264,7 @@ namespace Template.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Devices", (string)null);
+                    b.ToTable("Devices");
                 });
 
             modelBuilder.Entity("Template.Domain.Entities.GovernmentalEntity", b =>
@@ -285,7 +288,7 @@ namespace Template.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GovernmentalEntities", (string)null);
+                    b.ToTable("GovernmentalEntities");
                 });
 
             modelBuilder.Entity("Template.Domain.Entities.History", b =>
@@ -327,7 +330,7 @@ namespace Template.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Histories", (string)null);
+                    b.ToTable("Histories");
                 });
 
             modelBuilder.Entity("Template.Domain.Entities.Note", b =>
@@ -358,7 +361,7 @@ namespace Template.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notes", (string)null);
+                    b.ToTable("Notes");
                 });
 
             modelBuilder.Entity("Template.Domain.Entities.Notification", b =>
@@ -391,7 +394,7 @@ namespace Template.Infrastructure.Migrations
 
                     b.HasIndex("DeviceId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Template.Domain.Entities.OTP", b =>
@@ -421,7 +424,7 @@ namespace Template.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("OTPs", (string)null);
+                    b.ToTable("OTPs");
                 });
 
             modelBuilder.Entity("Template.Domain.Entities.User", b =>

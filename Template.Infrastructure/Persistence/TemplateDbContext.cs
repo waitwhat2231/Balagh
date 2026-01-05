@@ -49,7 +49,10 @@ public class TemplateDbContext(DbContextOptions<TemplateDbContext> options) : Id
             .HasMany(u => u.LockedComplaints)
             .WithOne(c => c.LockedByUser)
             .HasForeignKey(c => c.LockedBy)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
+
+
 
         // Complaint → ComplaintFiles
         modelBuilder.Entity<Complaint>()
