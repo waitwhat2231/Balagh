@@ -103,4 +103,9 @@ public class CachedComplaintRepository : IComplaintRepository
     {
         _decorated.ApplyConcurrencyCheck(complaint, rowVersion);
     }
+
+    public async Task RemoveFileAsync(int fileId)
+    {
+        await _decorated.RemoveFileAsync(fileId);
+    }
 }
