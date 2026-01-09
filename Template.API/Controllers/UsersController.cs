@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,13 @@ namespace Template.API.Controllers
 {
     [ApiController]
     [Route("api/users")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class UsersController(IMediator mediator) : ControllerBase
     {
 
         [HttpPost("register")]
+        [MapToApiVersion(1.0)]
         public async Task<IActionResult> RegisterUser([FromForm] RegisterUserCommand request)
         {
             var result = await mediator.Send(request);
@@ -29,7 +33,9 @@ namespace Template.API.Controllers
             }
             return Ok(result);
         }
+
         [HttpPost("confirmEmail")]
+        [MapToApiVersion(1.0)]
         public async Task<ActionResult> CofirmUserEmail([FromBody] ConfirmEmailCommand command)
         {
             var result = await mediator.Send(command);
@@ -38,6 +44,18 @@ namespace Template.API.Controllers
                 return BadRequest(result.Errors);
             }
             return Ok(result);
+        }
+
+        [HttpPost("confirmEmail")]
+        [MapToApiVersion(2.0)]
+        public async Task<IActionResult> RegisterUserWithLoginForEmployee([FromBody] ConfirmEmailWithLoginCommand request)
+        {
+            var result = await mediator.Send(request);
+            if (!result.SuccessStatus)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result.Data);
         }
 
         [HttpPost("login")]

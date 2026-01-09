@@ -536,4 +536,41 @@ public class AccountRepository(UserManager<User> userManager,
     {
         throw new NotImplementedException();
     }
+
+    public async Task<AuthResponse?> ConfirmEmailAndLoginAsync(string email, string code, string deviceToken)
+    {
+        var user = await userManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            throw new BadHttpRequestException("Wrong Otp"); ;
+        }
+        var otp = await otpRepository.GetOtpFromCode(code, user.Id);
+        if (otp == null || otp.Consumed == true || DateTime.UtcNow > otp.ExpiresAt)
+        {
+            throw new BadHttpRequestException("Wrong Otp");
+        }
+        user.EmailConfirmed = true;
+        otp.Consumed = true;
+        await dbContext.SaveChangesAsync();
+        var existingDevice = await deviceRepository.GetDeviceByToken(deviceToken, user.Id);
+        if (existingDevice != null)
+        {
+            existingDevice.LastLoggedInAt = DateTime.UtcNow;
+            await deviceRepository.SaveChangesAsync();
+        }
+        else
+        {
+
+            var device = new Device()
+            {
+                LastLoggedInAt = DateTime.UtcNow,
+                FcmToken = deviceToken,
+                UserId = user.Id,
+                IsActive = true
+            };
+            await deviceRepository.AddAsync(device);
+        }
+        var token = await tokenRepository.GenerateToken(user.Id);
+        return token;
+    }
 }

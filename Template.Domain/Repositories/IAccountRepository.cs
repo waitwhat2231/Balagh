@@ -36,4 +36,5 @@ public interface IAccountRepository
     Task<List<User>> GetAdmins();
     Task<IdentityResult> AssistantRecoveryPassword(string userId, string newPassword);
     Task<bool> ConfirmEmailAsync(string email, string code);
+    Task<AuthResponse?> ConfirmEmailAndLoginAsync(string email, string code, string deviceToken);
 }

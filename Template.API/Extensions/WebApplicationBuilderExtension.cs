@@ -22,9 +22,7 @@ namespace Template.API.Extensions
                 options.DefaultApiVersion = new ApiVersion(1, 0);
                 options.ReportApiVersions = true;
                 options.ApiVersionReader = ApiVersionReader.Combine(
-                    new QueryStringApiVersionReader("api-version"),
-                    new HeaderApiVersionReader("X-Version"),
-                    new MediaTypeApiVersionReader("ver")
+                    new QueryStringApiVersionReader("api-version")
                     );
             }).AddMvc()
             .AddApiExplorer(options =>
@@ -36,10 +34,6 @@ namespace Template.API.Extensions
                 // from the example: "Sales - v1"
                 options.FormatGroupName = (group, version) => $"{group} - {version}";
             });
-
-
-            ;
-
             builder.Services.AddTransient(
                 typeof(IPipelineBehavior<,>),
                 typeof(LoggingBehavior<,>)

@@ -24,6 +24,13 @@ namespace TripPlanner.API.Middlewares
                 context.Response.StatusCode = 403;
                 await context.Response.WriteAsync(forbidden.Message);
             }
+            catch (BadHttpRequestException forbidden)
+            {
+                logger.LogWarning(forbidden.Message);
+
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync(forbidden.Message);
+            }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
