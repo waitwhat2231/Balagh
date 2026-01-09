@@ -22,6 +22,7 @@ public class ComplaintRepository : GenericRepository<Complaint>, IComplaintRepos
             .Include(c => c.Histories)
                 .ThenInclude(h => h.User)
             .Include(c => c.ComplaintFiles)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(c => c.Id == complaintId);
     }
     public async Task<PagedEntity<GetAllComplaintsMappingDto>> GetAllComplaintsWithUserName(int pageNum, int pageSize, EnumRoleNames userRole, string UserId)
@@ -79,5 +80,32 @@ public class ComplaintRepository : GenericRepository<Complaint>, IComplaintRepos
             PageNumber = pageNum,
             PageSize = pageSize,
         };
+    }
+
+    public void ApplyConcurrencyCheck(Complaint complaint, byte[] rowVersion)
+    {
+        dbContext.Entry(complaint)
+            .Property(c => c.RowVersion)
+            .OriginalValue = rowVersion;
+
+    }
+
+    public async Task<Complaint?> GetComplaintByIdWithDetailsAsync(int complaintId)
+    {
+        return await dbContext.Complaints
+             .Include(c => c.GovernmentalEntity)
+             .Include(c => c.User)
+             .Include(c => c.Histories)
+                 .ThenInclude(h => h.User)
+             .Include(c => c.ComplaintFiles)
+             .AsSplitQuery()
+             .FirstOrDefaultAsync(c => c.Id == complaintId);
+    }
+
+    public async Task RemoveFileAsync(int fileId)
+    {
+        var fileEntry = await dbContext.ComplaintFiles.FindAsync(fileId);
+        dbContext.ComplaintFiles.Remove(fileEntry);
+        await dbContext.SaveChangesAsync();
     }
 }

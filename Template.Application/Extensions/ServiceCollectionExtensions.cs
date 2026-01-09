@@ -2,6 +2,7 @@
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using QuestPDF.Infrastructure;
+using Template.Application.Events;
 using Template.Application.PDFFilesHelper;
 using Template.Application.Users;
 
@@ -22,6 +23,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserContext, UserContext>();
         services.AddScoped<IPdfExportService, PdfExportService>();
         QuestPDF.Settings.License = LicenseType.Community;
+
+        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+        services.AddMemoryCache();
 
         services.AddAutoMapper(applicationAssembly);
 

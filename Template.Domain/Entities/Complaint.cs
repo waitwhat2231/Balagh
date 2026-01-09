@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Template.Domain.Events;
 
 namespace Template.Domain.Entities;
 
@@ -22,4 +23,18 @@ public class Complaint
     public List<ComplaintFile> ComplaintFiles { get; set; } = [];
     public List<Note> Notes { get; set; } = [];
     public List<History> Histories { get; set; } = [];
+
+    public List<DomainEvent> DomainEvents { get; set; } = [];
+
+
+
+
+    public void Update()
+    {
+        DomainEvents.Add(new ComplaintUpdatedDomainEvent(Id));
+    }
+    public void ClearDomainEvents()
+    {
+        DomainEvents.Clear();
+    }
 }

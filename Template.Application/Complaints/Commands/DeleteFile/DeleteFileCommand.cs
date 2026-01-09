@@ -6,4 +6,5 @@ public class DeleteFileCommand : ICommand
 {
     public int ComplaintId { get; set; }
     public int FileId { get; set; }
+    public required byte[] RowVersion { get; set; }
 }

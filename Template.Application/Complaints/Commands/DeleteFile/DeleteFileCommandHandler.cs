@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Template.Application.Abstraction.Commands;
 using Template.Application.Complaints.Commands.AddFile;
+using Template.Application.Events;
 using Template.Application.Users;
 using Template.Domain;
 using Template.Domain.Entities;
@@ -13,30 +14,34 @@ using Template.Domain.Services;
 namespace Template.Application.Complaints.Commands.DeleteFile;
 
 public class DeleteFileCommandHandler(ILogger<AddFileCommandHandler> logger, IComplaintRepository complaintRepository, IUserContext userContext,
-    IFileService fileService) : ICommandHandler<DeleteFileCommand>
+    IFileService fileService, IDomainEventDispatcher domainEventDispatcher) : ICommandHandler<DeleteFileCommand>
 {
     public async Task<Result> Handle(DeleteFileCommand request, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Adding new file");
+        logger.LogInformation("Deleting file");
         var currentUser = userContext.GetCurrentUser();
         var dbComplaint = await complaintRepository.GetComplaintByIdWithFilesAsync(request.ComplaintId);
         if (dbComplaint == null)
         {
             throw new NotFoundException("Complain", request.ComplaintId.ToString());
         }
-        if (dbComplaint.UserId != currentUser.Id && dbComplaint.LockedBy != currentUser.Id)
+        if (dbComplaint.UserId != currentUser.Id)
         {
             throw new ForbiddenException("Editing this Complaint");
         }
+        complaintRepository.ApplyConcurrencyCheck(dbComplaint, request.RowVersion);
         var existingFile = dbComplaint.ComplaintFiles.FirstOrDefault(f => f.Id == request.FileId);
         if (existingFile == null)
         {
             throw new NotFoundException("Complaint File", request.FileId.ToString());
         }
         fileService.DeleteFile(existingFile.Path);
-        dbComplaint.ComplaintFiles.Remove(existingFile);
+        await complaintRepository.RemoveFileAsync(request.FileId);
         AddHistory(dbComplaint.Id, currentUser.Id, dbComplaint.Histories, ChangeType.DeleteFile, existingFile.Path, "");
-        await complaintRepository.SaveChangesAsync();
+        dbComplaint.Update();
+        await domainEventDispatcher.DispatchAsync(dbComplaint.DomainEvents);
+        dbComplaint.ClearDomainEvents();
+
         return Result.Success();
     }
     private static void AddHistory(int complaintId, string userId, List<History> historyEntries, ChangeType type, object oldValue, object newValue, object? details = null)

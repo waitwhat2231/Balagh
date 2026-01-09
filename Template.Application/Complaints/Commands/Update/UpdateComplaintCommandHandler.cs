@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Template.Application.Abstraction.Commands;
 using Template.Application.Complaints.Dtos;
+using Template.Application.Events;
 using Template.Application.Users;
 using Template.Domain;
 using Template.Domain.Entities;
@@ -14,13 +15,13 @@ namespace Template.Application.Complaints.Commands.Update;
 
 public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler> logger, IMapper mapper,
     IAccountRepository accountRepository, IComplaintRepository complaintRepository,
-    IUserContext userContext, IFileService fileService) : ICommandHandler<UpdateComplaintCommand, ComplaintDto>
+    IUserContext userContext, IFileService fileService, IDomainEventDispatcher domainEventDispatcher) : ICommandHandler<UpdateComplaintCommand, ComplaintDto>
 {
     public async Task<Result<ComplaintDto>> Handle(UpdateComplaintCommand request, CancellationToken cancellationToken)
     {
         logger.LogInformation("Updating complaint");
         string currentUserId = userContext.GetCurrentUser()!.Id;
-        var dbUser = await accountRepository.FindUserByIdOptionalTracking(currentUserId, true);
+        var dbUser = await accountRepository.FindUserByIdOptionalTracking(currentUserId, false);
 
         var existingComplaint = await complaintRepository.GetComplaintByIdWithFilesAsync(request.ComplaintId);
         if (existingComplaint == null)
@@ -32,10 +33,10 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
         {
             return Result<ComplaintDto>.Failure(new List<string> { "Someone else is processing this complaint" });
         }
+        complaintRepository.ApplyConcurrencyCheck(existingComplaint, request.RowVersion);
         var historyEntries = new List<History>();
 
         /*Processing changing fields (hopefully)*/
-        existingComplaint.RowVersion = request.RowVersion;
         if (existingComplaint.Description != request.Description && !string.IsNullOrEmpty(request.Description))
         {
             AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.UpdateDescription, existingComplaint.Description, request.Description);
@@ -48,15 +49,15 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
             existingComplaint.Location = request.Location;
         }
 
-        if (request.GovernmentalEntityId != null && existingComplaint.GovernmentalEntityId != request.GovernmentalEntityId)
+        if (request.GovernmentalEntityId.HasValue && existingComplaint.GovernmentalEntityId != request.GovernmentalEntityId)
         {
             AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.GovermentalEntityChange, existingComplaint.GovernmentalEntityId, request.GovernmentalEntityId);
             existingComplaint.GovernmentalEntityId = (int)request.GovernmentalEntityId;
         }
-        if (request.NewStatus != null && (existingComplaint.Status != request.NewStatus))
+        if (request.NewStatus.HasValue && (existingComplaint.Status != request.NewStatus))
         {
             AddHistory(existingComplaint.Id, dbUser!.Id, historyEntries, ChangeType.UpdateStatus, existingComplaint.Status, request.NewStatus);
-            existingComplaint.Status = (ComplaintStatus)request.NewStatus;
+            existingComplaint.Status = request.NewStatus.Value;
         }
 
         /*Unlocking the complaint (hopefully)*/
@@ -67,8 +68,10 @@ public class UpdateComplaintCommandHandler(ILogger<UpdateComplaintCommandHandler
         }
 
         existingComplaint.Histories.AddRange(historyEntries);
+        existingComplaint.Update();
         await complaintRepository.SaveChangesAsync();
-
+        await domainEventDispatcher.DispatchAsync(existingComplaint.DomainEvents);
+        existingComplaint.ClearDomainEvents();
         var result = mapper.Map<ComplaintDto>(existingComplaint);
         return Result<ComplaintDto>.Success(result);
     }

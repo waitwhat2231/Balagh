@@ -22,6 +22,7 @@ public class TemplateDbContext(DbContextOptions<TemplateDbContext> options) : Id
 
         //relationships between the tables
 
+        modelBuilder.Entity<Complaint>().Ignore(t => t.DomainEvents);
         // GovernmentalEntity → Employees (Users)
         modelBuilder.Entity<GovernmentalEntity>()
             .HasMany(ge => ge.Employees)

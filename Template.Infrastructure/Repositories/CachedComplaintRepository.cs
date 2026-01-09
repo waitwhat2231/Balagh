@@ -18,6 +18,13 @@ public class CachedComplaintRepository : IComplaintRepository
 
     public async Task<Complaint?> GetComplaintByIdWithFilesAsync(int complaintId)
     {
+
+        return await _decorated.GetComplaintByIdWithFilesAsync(complaintId);
+
+    }
+
+    public async Task<Complaint?> GetComplaintByIdWithDetailsAsync(int complaintId)
+    {
         string key = $"complaint-{complaintId}";
 
         return await _memoryCache.GetOrCreateAsync(
@@ -26,7 +33,7 @@ public class CachedComplaintRepository : IComplaintRepository
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
 
-                return _decorated.GetComplaintByIdWithFilesAsync(complaintId);
+                return _decorated.GetComplaintByIdWithDetailsAsync(complaintId);
             });
     }
 
@@ -90,5 +97,10 @@ public class CachedComplaintRepository : IComplaintRepository
     public Task<PagedEntity<GetAllComplaintsMappingDto>> GetAllComplaintsWithUserName(int pageNum, int pageSize, EnumRoleNames userRole, string UserId)
     {
         return _decorated.GetAllComplaintsWithUserName(pageNum, pageSize, userRole, UserId); ;
+    }
+
+    public void ApplyConcurrencyCheck(Complaint complaint, byte[] rowVersion)
+    {
+        _decorated.ApplyConcurrencyCheck(complaint, rowVersion);
     }
 }

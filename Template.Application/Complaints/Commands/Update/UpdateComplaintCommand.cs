@@ -17,6 +17,6 @@ public class UpdateComplaintCommand : ICommand<ComplaintDto>
     public string? Description { get; set; } = string.Empty;
     public ComplaintStatus? NewStatus { get; set; }
     [Timestamp]
-    public byte[] RowVersion { get; set; } = [];
+    public byte[] RowVersion { get; set; } = Array.Empty<byte>();
 
 }

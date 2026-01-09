@@ -10,7 +10,6 @@ public enum ComplaintStatus
 
 public enum ChangeType
 {
-    StatusChange,
     AddNote,
     RequestMoreInformation,
     UpdateDescription,
