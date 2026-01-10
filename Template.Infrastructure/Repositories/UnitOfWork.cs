@@ -4,11 +4,12 @@ using Template.Infrastructure.Persistence;
 
 namespace Template.Infrastructure.Repositories
 {
-    class UnitOfWork(TemplateDbContext dbContext, IDbContextTransaction? dbContextTransaction) : IUnitOfWork
+    class UnitOfWork(TemplateDbContext dbContext) : IUnitOfWork
     {
+        private IDbContextTransaction? dbContextTransaction { get; set; }
         public async Task BeginTransactionAsync()
         {
-            await dbContext.Database.BeginTransactionAsync();
+            dbContextTransaction = await dbContext.Database.BeginTransactionAsync();
         }
 
         public async Task CommitAsync()

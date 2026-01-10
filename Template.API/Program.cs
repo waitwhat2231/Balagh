@@ -40,13 +40,13 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 //app.MapReverseProxy();
-if (app.Environment.IsDevelopment())
-{
-    using (var appScope = app.Services.CreateScope())
-    {
-        await IdentityTestUserSeeder.SeedUsersAsync(appScope.ServiceProvider, 100);
-    }
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    using (var appScope = app.Services.CreateScope())
+//    {
+//        await IdentityTestUserSeeder.SeedUsersAsync(appScope.ServiceProvider, 100);
+//    }
+//}
 
 var scope = app.Services.CreateScope(); //for seeders
 // example: var govSeeder = scope.ServiceProvider.GetRequiredService<IGovernorateSeeder>();

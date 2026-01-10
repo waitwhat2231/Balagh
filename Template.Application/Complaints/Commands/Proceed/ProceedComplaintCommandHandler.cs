@@ -9,26 +9,36 @@ using Template.Domain.Repositories;
 namespace Template.Application.Complaints.Commands.Proceed;
 
 public class ProceedComplaintCommandHandler(ILogger<ProceedComplaintCommandHandler> logger, IComplaintRepository complaintRepository,
-    IMapper mapper, IUserContext userContext, IAccountRepository accountRepository) : ICommandHandler<ProceedComplaintCommand, ComplaintDto>
+    IMapper mapper, IUserContext userContext, IAccountRepository accountRepository, IUnitOfWork unitOfWork) : ICommandHandler<ProceedComplaintCommand, ComplaintDto>
 {
     public async Task<Result<ComplaintDto>> Handle(ProceedComplaintCommand request, CancellationToken cancellationToken)
     {
-        logger.LogInformation($"Attempting to Lock complaint with Id {request.ComplaintId}");
-        var currentUserId = userContext.GetCurrentUser()!.Id;
-        var dbUser = await accountRepository.FindUserById(currentUserId);
-
-        var existingComplaint = await complaintRepository.GetComplaintByIdWithFilesAsync(request.ComplaintId);
-        if (existingComplaint == null)
+        try
         {
-            return Result<ComplaintDto>.Failure(new List<string> { "Complaint not found " });
-        }
-        existingComplaint.RowVersion = request.RowVersion;
-        existingComplaint.IsLocked = true;
-        existingComplaint.LockedBy = currentUserId;
-        await complaintRepository.SaveChangesAsync();
-        //await complaintRepository.SaveChangesAsync();
+            logger.LogInformation($"Attempting to Lock complaint with Id {request.ComplaintId}");
+            await unitOfWork.BeginTransactionAsync();
+            var currentUserId = userContext.GetCurrentUser()!.Id;
+            var dbUser = await accountRepository.FindUserById(currentUserId);
 
-        var result = mapper.Map<ComplaintDto>(existingComplaint);
-        return Result<ComplaintDto>.Success(result);
+            var existingComplaint = await complaintRepository.GetComplaintByIdWithFilesAsync(request.ComplaintId);
+            if (existingComplaint == null)
+            {
+                return Result<ComplaintDto>.Failure(new List<string> { "Complaint not found " });
+            }
+            existingComplaint.RowVersion = request.RowVersion;
+            existingComplaint.IsLocked = true;
+            existingComplaint.LockedBy = currentUserId;
+            await complaintRepository.SaveChangesAsync();
+            await unitOfWork.CommitAsync();
+            //await complaintRepository.SaveChangesAsync();
+
+            var result = mapper.Map<ComplaintDto>(existingComplaint);
+            return Result<ComplaintDto>.Success(result);
+        }
+        catch
+        {
+            await unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 }

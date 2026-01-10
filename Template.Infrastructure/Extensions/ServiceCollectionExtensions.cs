@@ -68,6 +68,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGovermentalEntitiesRepository, GovermentalEntitiesRepository>();
         services.AddScoped<IRolesSeeder, RolesSeeder>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
         // firebase
