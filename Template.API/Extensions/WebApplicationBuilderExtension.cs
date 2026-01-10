@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 using Template.API.AOP;
 using TripPlanner.API.Middlewares;
@@ -15,6 +16,11 @@ namespace Template.API.Extensions
         {
             builder.Services.AddHttpContextAccessor();
 
+
+            builder.Services.AddSingleton(new ActivitySource("Balagh.App"));
+            builder.Services.AddTransient(
+                typeof(IPipelineBehavior<,>),
+                typeof(TracingBehavior<,>));
 
             builder.Services.AddApiVersioning(options =>
             {

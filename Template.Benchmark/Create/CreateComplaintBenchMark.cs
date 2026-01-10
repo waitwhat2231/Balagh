@@ -19,7 +19,8 @@ public class CreateComplaintBenchMark
         var userContext = new FakeUserContext();
         var mapper = new FakeMapper();
         var fileService = new FakeFileService();
-        _handler = new CreateComplaintCommandHandler(logger, repo, userContext, mapper, fileService);
+        var fakeUnitOfWork = new FakeUnitOfWork();
+        _handler = new CreateComplaintCommandHandler(logger, repo, userContext, mapper, fileService, fakeUnitOfWork);
 
         // Prepare a realistic command
         _command = new CreateComplaintCommand()

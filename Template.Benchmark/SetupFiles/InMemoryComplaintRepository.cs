@@ -14,6 +14,11 @@ namespace Template.Benchmark.SetupFiles
             return Task.FromResult(entity);
         }
 
+        public void ApplyConcurrencyCheck(Complaint complaint, byte[] rowVersion)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<Complaint?> FindByIdAsync(int id)
         {
             throw new NotImplementedException();
@@ -29,6 +34,11 @@ namespace Template.Benchmark.SetupFiles
             throw new NotImplementedException();
         }
 
+        public Task<Complaint?> GetComplaintByIdWithDetailsAsync(int complaintId)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<Complaint?> GetComplaintByIdWithFilesAsync(int complaintId)
         {
             throw new NotImplementedException();
@@ -40,6 +50,11 @@ namespace Template.Benchmark.SetupFiles
         }
 
         public Task HardDeleteAsync(Complaint entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveFileAsync(int fileId)
         {
             throw new NotImplementedException();
         }

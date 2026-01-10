@@ -16,7 +16,7 @@ public class GetComplaintByIdQueryHandler(ILogger<GetComplaintByIdQueryHandler> 
     {
         logger.LogInformation("Getting complaint by id");
 
-        var complaint = await complaintRepository.GetComplaintByIdWithFilesAsync(request.ComplaintId);
+        var complaint = await complaintRepository.GetComplaintByIdWithDetailsAsync(request.ComplaintId);
         if (complaint == null)
         {
             throw new InvalidOperationException("Complaint not found");
