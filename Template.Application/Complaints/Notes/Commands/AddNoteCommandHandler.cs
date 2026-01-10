@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Text.Json;
 using Template.Application.Abstraction.Commands;
+using Template.Application.Helper;
 using Template.Application.Users;
 using Template.Domain.Entities;
 using Template.Domain.Entities.ResponseEntity;
@@ -37,7 +37,7 @@ namespace Template.Application.Complaints.Notes.Commands
                 CreatedAt = DateTime.UtcNow,
                 OldValue = string.Empty,
                 NewValue = request.NoteBody,
-                ChangeDetails = JsonSerializer.Serialize(new { note_id = noteEntity.Id }),
+                ChangeDetails = JsonHelper.Serialize(new { note_id = noteEntity.Id }),
             };
             await historyRepository.AddAsync(historyRecord);
             return Result.Success();

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Text.Json;
 using Template.Application.Abstraction.Commands;
+using Template.Application.Helper;
 using Template.Application.Users;
 using Template.Domain.Entities;
 using Template.Domain.Entities.ResponseEntity;
@@ -46,8 +46,8 @@ namespace Template.Application.Complaints.Commands.ExtraInformation
                 CreatedAt = DateTime.UtcNow,
                 ChangeType = Domain.ChangeType.RequestMoreInformation,
                 OldValue = string.Empty,
-                NewValue = request.Message,
-                ChangeDetails = JsonSerializer.Serialize(new { complaint_id = request.ComplaintId })
+                NewValue = JsonHelper.Serialize(request.Message),
+                ChangeDetails = JsonHelper.Serialize(new { complaint_id = request.ComplaintId })
             };
             await historyRepository.AddAsync(sendNotificationHistoryRecord);
             return Result.Success();

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Text.Json;
 using Template.Application.Abstraction.Commands;
 using Template.Application.Events;
+using Template.Application.Helper;
 using Template.Application.Users;
 using Template.Domain;
 using Template.Domain.Entities;
@@ -54,9 +54,9 @@ public class AddFileCommandHandler(ILogger<AddFileCommandHandler> logger, ICompl
             ComplaintId = complaintId,
             UserId = userId,
             ChangeType = type,
-            OldValue = JsonSerializer.Serialize(oldValue),
-            NewValue = JsonSerializer.Serialize(newValue),
-            ChangeDetails = details != null ? JsonSerializer.Serialize(details) : string.Empty,
+            OldValue = JsonHelper.Serialize(oldValue),
+            NewValue = JsonHelper.Serialize(newValue),
+            ChangeDetails = details != null ? JsonHelper.Serialize(details) : string.Empty,
             CreatedAt = DateTime.UtcNow
         });
     }
