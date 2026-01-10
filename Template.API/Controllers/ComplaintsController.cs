@@ -105,6 +105,7 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     [Route("AddFile")]
     public async Task<ActionResult> AddFile([FromForm] AddFileCommand command)
     {
@@ -117,6 +118,7 @@ public class ComplaintsController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize]
     [Route("RemoveFile")]
     public async Task<ActionResult> AddFile([FromBody] DeleteFileCommand command)
     {
